@@ -1,0 +1,36 @@
+name: Pull Request Healthcheck
+run-name: Check Pull Request Health
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  check-health:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.5.0'
+
+      - name: Install dependencies
+        uses: borales/actions-yarn@4
+        with:
+          cmd: install
+
+      - name: Test lint rules
+        uses: borales/actions-yarn@4
+        with:
+          cmd: run lint
+
+      - name: Test prettier formatting
+        uses: borales/actions-yarn@4
+        with:
+          cmd: run prettier:check
+
+      - name: Test types
+        uses: borales/actions-yarn@4
+        with:
+          cmd: run types
