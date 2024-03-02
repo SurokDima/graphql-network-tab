@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - develop
 jobs:
   check-health:
     runs-on: ubuntu-latest
@@ -33,4 +34,9 @@ jobs:
       - name: Test types
         uses: borales/actions-yarn@4
         with:
-          cmd: run types
+          cmd: run tsc:check
+
+      - name: Test build
+        uses: borales/actions-yarn@4
+        with:
+          cmd: run build
