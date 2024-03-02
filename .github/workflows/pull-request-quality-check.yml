@@ -17,26 +17,26 @@ jobs:
           node-version: '20.5.0'
 
       - name: Install dependencies
-        uses: borales/actions-yarn@4
+        uses: borales/actions-yarn@v4
         with:
           cmd: install
 
       - name: Test lint rules
-        uses: borales/actions-yarn@4
+        uses: borales/actions-yarn@v4
         with:
           cmd: run lint
 
       - name: Test prettier formatting
-        uses: borales/actions-yarn@4
+        uses: borales/actions-yarn@v4
         with:
           cmd: run prettier:check
 
       - name: Test types
-        uses: borales/actions-yarn@4
+        uses: borales/actions-yarn@v4
         with:
           cmd: run tsc:check
 
       - name: Test build
-        uses: borales/actions-yarn@4
+        uses: borales/actions-yarn@v4
         with:
           cmd: run build
