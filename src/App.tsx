@@ -1,32 +1,56 @@
 import { useState } from "react";
 
-import viteLogo from "../public/vite.svg";
+import { Stack, CssBaseline } from "@mui/joy";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
-import reactLogo from "./assets/react.svg";
-import "./App.css";
+import { GraphQLRequestPanel } from "./components/GraphQLRequestPanel.tsx";
+import { GraphQLRequestsList } from "./components/GraphQLRequestsList.tsx";
+import { mockedGraphQLRequests } from "./mock/mockedGraphQLRequests.ts";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+
+  const handleSelectRequest = (requestId: string) => {
+    if (selectedRequestId === requestId) {
+      setSelectedRequestId(null);
+      return;
+    }
+
+    setSelectedRequestId(requestId);
+  };
+
+  const selectedRequest = mockedGraphQLRequests.find((request) => request.id === selectedRequestId);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>count is {count}</button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-    </>
+    <Stack direction="column" spacing={4} sx={{ height: "100%", position: "relative" }}>
+      <CssBaseline />
+      {selectedRequest ? (
+        <PanelGroup direction="horizontal">
+          <Panel>
+            <GraphQLRequestsList
+              type="short"
+              selectedRequestId={selectedRequestId}
+              onSelectRequest={handleSelectRequest}
+              requests={[...mockedGraphQLRequests]}
+            />
+          </Panel>
+          <PanelResizeHandle />
+          <Panel>
+            <GraphQLRequestPanel
+              request={selectedRequest!}
+              onClose={() => setSelectedRequestId(null)}
+            />
+          </Panel>
+        </PanelGroup>
+      ) : (
+        <GraphQLRequestsList
+          type="long"
+          selectedRequestId={selectedRequestId}
+          onSelectRequest={handleSelectRequest}
+          requests={[...mockedGraphQLRequests]}
+        />
+      )}
+    </Stack>
   );
 }
 
