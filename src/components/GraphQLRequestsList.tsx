@@ -2,8 +2,9 @@ import { CSSProperties, FC } from "react";
 
 import { Avatar, Sheet, Stack, Table, Typography } from "@mui/joy";
 
-import { NetworkRequestStatus } from "../NetworkRequestStatus.tsx";
-import { GraphQLRequest } from "../types/GraphQLRequest.ts";
+import { GraphQLRequest } from "../types/graphql-request.ts";
+
+import { NetworkRequestStatus } from "./NetworkRequestStatus.tsx";
 
 type GraphQLRequestsListProps = {
   requests: GraphQLRequest[];
@@ -70,7 +71,7 @@ export const GraphQLRequestsList: FC<GraphQLRequestsListProps> = ({
                     </Stack>
                   </td>
                   <td>
-                    <NetworkRequestStatus statusCode={request.response.statusCode} />
+                    <NetworkRequestStatus statusCode={request.networkRequest.response.statusCode} />
                   </td>
                 </>
               ) : (

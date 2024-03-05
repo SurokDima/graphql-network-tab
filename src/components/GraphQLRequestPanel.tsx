@@ -3,7 +3,9 @@ import { FC } from "react";
 import { Close } from "@mui/icons-material";
 import { IconButton, Tab, TabList, TabPanel, Tabs } from "@mui/joy";
 
-import { GraphQLRequest } from "../types/GraphQLRequest.ts";
+import { GraphQLRequest } from "../types/graphql-request.ts";
+
+import { NetworkRequestHeaders } from "./NetworkReqestHeaders.tsx";
 
 type GraphQLRequestPanelProps = {
   request: GraphQLRequest;
@@ -17,7 +19,7 @@ export const GraphQLRequestPanel: FC<GraphQLRequestPanelProps> = ({ request, onC
       <TabList>
         <IconButton
           sx={{
-            "--IconButton-radius": "0",
+            borderRadius: "0",
           }}
           onClick={onClose}
           variant="plain"
@@ -29,7 +31,9 @@ export const GraphQLRequestPanel: FC<GraphQLRequestPanelProps> = ({ request, onC
         <Tab>Response</Tab>
         <Tab>Response (Raw)</Tab>
       </TabList>
-      <TabPanel value={0}>Headers</TabPanel>
+      <TabPanel value={0}>
+        <NetworkRequestHeaders networkRequest={request.networkRequest} />
+      </TabPanel>
       <TabPanel value={1}>Request</TabPanel>
       <TabPanel value={2}>
         <pre>{JSON.stringify(request)}</pre>
