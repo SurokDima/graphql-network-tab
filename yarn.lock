@@ -3464,6 +3464,7 @@ __metadata:
     eslint-plugin-react-refresh: "npm:^0.4.5"
     eslint-plugin-testing-library: "npm:^6.1.0"
     eslint-plugin-unused-imports: "npm:^3.0.0"
+    highlight.js: "npm:^11.9.0"
     nanoid: "npm:^5.0.6"
     prettier: "npm:^3.2.5"
     react: "npm:^18.2.0"
@@ -3535,6 +3536,13 @@ __metadata:
   dependencies:
     function-bind: "npm:^1.1.2"
   checksum: 10c0/9e27e70e8e4204f4124c8f99950d1ba2b1f5174864fd39ff26da190f9ea6488c1b3927dcc64981c26d1f637a971783c9489d62c829d393ea509e6f1ba20370bb
+  languageName: node
+  linkType: hard
+
+"highlight.js@npm:^11.9.0":
+  version: 11.9.0
+  resolution: "highlight.js@npm:11.9.0"
+  checksum: 10c0/27cfa8717dc9d200aecbdb383eb122d5f45ce715d2f468583785d36fbfe5076ce033abb02486dc13b407171721cda6f474ed3f3a5a8e8c3d91367fa5f51ee374
   languageName: node
   linkType: hard
 

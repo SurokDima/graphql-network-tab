@@ -1,11 +1,8 @@
 import { FC, ReactNode, useState } from "react";
 
-import { CopyAll } from "@mui/icons-material";
-import { IconButton, Snackbar, Table } from "@mui/joy";
-import toast from "react-hot-toast";
+import { Snackbar, Table } from "@mui/joy";
 
-import { useCopy } from "../hooks/useCopy.ts";
-
+import { CopyButton } from "./CopyButton.tsx";
 import styles from "./Description.module.scss";
 
 export type DescriptionProps = {
@@ -17,10 +14,6 @@ export type DescriptionProps = {
 };
 
 export const Description: FC<DescriptionProps> = ({ rows }) => {
-  const { copy } = useCopy({
-    onSuccess: () => toast.success("Copied"),
-  });
-
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
 
   return (
@@ -38,16 +31,7 @@ export const Description: FC<DescriptionProps> = ({ rows }) => {
               <td>
                 {row.copyValue && (
                   <div>
-                    <IconButton
-                      onClick={() => {
-                        if (!row.copyValue) return;
-                        copy(row.copyValue);
-                      }}
-                      variant="plain"
-                      color="success"
-                    >
-                      <CopyAll />
-                    </IconButton>
+                    <CopyButton value={row.copyValue} />
                   </div>
                 )}
               </td>

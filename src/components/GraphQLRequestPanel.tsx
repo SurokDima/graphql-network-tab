@@ -5,7 +5,9 @@ import { IconButton, Tab, TabList, TabPanel, Tabs } from "@mui/joy";
 
 import { GraphQLRequest } from "../types/graphql-request.ts";
 
+import { GraphQLRequestView } from "./GraphQLRequestView.tsx";
 import { NetworkRequestHeaders } from "./NetworkReqestHeaders.tsx";
+import { RawResponseView } from "./RawResponseView.tsx";
 
 type GraphQLRequestPanelProps = {
   request: GraphQLRequest;
@@ -34,11 +36,15 @@ export const GraphQLRequestPanel: FC<GraphQLRequestPanelProps> = ({ request, onC
       <TabPanel value={0}>
         <NetworkRequestHeaders networkRequest={request.networkRequest} />
       </TabPanel>
-      <TabPanel value={1}>Request</TabPanel>
+      <TabPanel value={1}>
+        <GraphQLRequestView request={request} />
+      </TabPanel>
       <TabPanel value={2}>
         <pre>{JSON.stringify(request)}</pre>
       </TabPanel>
-      <TabPanel value={3}>Response (Raw)</TabPanel>
+      <TabPanel value={3}>
+        <RawResponseView response={request.networkRequest.response.body} />
+      </TabPanel>
     </Tabs>
   );
 };
