@@ -6,5 +6,6 @@ export type NetworkRequest = {
   response: {
     headers: Headers;
     statusCode: number;
+    body: string;
   };
 };
