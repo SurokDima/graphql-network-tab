@@ -3471,6 +3471,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     react-hot-toast: "npm:^2.4.1"
     react-resizable-panels: "npm:^2.0.12"
+    react18-json-view: "npm:^0.2.7"
     sass: "npm:^1.71.1"
     typescript: "npm:^5.2.2"
     vite: "npm:^5.1.4"
@@ -4904,6 +4905,15 @@ __metadata:
     react: ^16.14.0 || ^17.0.0 || ^18.0.0
     react-dom: ^16.14.0 || ^17.0.0 || ^18.0.0
   checksum: 10c0/f9a07caa33a7f3b0f7c3accc994e138e47fe145012d9e0c641d1c0dc68fe21a1a9d52281956f20469b89b1cb17d160f7ebbe20c460677138f4be96fab09fb8da
+  languageName: node
+  linkType: hard
+
+"react18-json-view@npm:^0.2.7":
+  version: 0.2.7
+  resolution: "react18-json-view@npm:0.2.7"
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: 10c0/e8976deaea3723564f496ea925cdaa8c268181cdaa560db67df193f655995e3d11eb1b3039271b3ccf15d1af5b69fd3c40c34fcab507215eb8189062f450096b
   languageName: node
   linkType: hard
 

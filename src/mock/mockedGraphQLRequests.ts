@@ -29,16 +29,22 @@ export const mockedGraphQLRequests = [
         statusCode: 200,
         body: JSON.stringify({
           data: {
-            users: [
-              {
-                id: "1",
-                name: "John Doe",
+            users: {
+              rows: [
+                {
+                  id: "1",
+                  name: "John Doe",
+                },
+                {
+                  id: "2",
+                  name: "Jane Doe",
+                },
+              ],
+              pageInfo: {
+                totalCount: 2,
+                nextPage: false,
               },
-              {
-                id: "2",
-                name: "Jane Doe",
-              },
-            ],
+            },
           },
         }),
       },
