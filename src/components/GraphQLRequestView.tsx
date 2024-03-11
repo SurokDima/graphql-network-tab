@@ -16,7 +16,7 @@ export const GraphQLRequestView: FC<GraphQLRequestViewProps> = ({ request }) => 
         <Accordion defaultExpanded>
           <AccordionSummary>Request</AccordionSummary>
           <AccordionDetails>
-            <Box paddingTop={1}>
+            <Box paddingTop={1} sx={{ overflowX: "auto" }}>
               <CodeView code={request.rawGraphQL} language="graphql" />
             </Box>
           </AccordionDetails>
@@ -24,8 +24,8 @@ export const GraphQLRequestView: FC<GraphQLRequestViewProps> = ({ request }) => 
         <Accordion defaultExpanded>
           <AccordionSummary>Variables</AccordionSummary>
           <AccordionDetails>
-            <Box paddingTop={1}>
-              <CodeView code={request.rawVariables} language="json" />
+            <Box paddingTop={1} sx={{ overflowX: "auto" }}>
+              <CodeView code={JSON.stringify(request.variables)} language="json" />
             </Box>
           </AccordionDetails>
         </Accordion>

@@ -1,9 +1,8 @@
 import { FC, ReactNode, useState } from "react";
 
-import { Snackbar, Table } from "@mui/joy";
+import { Snackbar, Table, styled } from "@mui/joy";
 
 import { CopyButton } from "./CopyButton.tsx";
-import styles from "./Description.module.scss";
 
 export type DescriptionProps = {
   rows: {
@@ -25,7 +24,7 @@ export const Description: FC<DescriptionProps> = ({ rows }) => {
       >
         <tbody>
           {rows.map((row, index) => (
-            <tr key={index} className={styles.row}>
+            <TableRow key={index}>
               <td>{row.label}</td>
               <td>{row.value}</td>
               <td>
@@ -35,7 +34,7 @@ export const Description: FC<DescriptionProps> = ({ rows }) => {
                   </div>
                 )}
               </td>
-            </tr>
+            </TableRow>
           ))}
         </tbody>
       </Table>
@@ -51,3 +50,31 @@ export const Description: FC<DescriptionProps> = ({ rows }) => {
     </>
   );
 };
+
+const TableRow = styled("tr")`
+  td:nth-child(1) {
+    width: 25%;
+  }
+
+  td:nth-child(2) {
+    word-wrap: break-word;
+  }
+
+  td:nth-child(3) {
+    width: 50px;
+
+    > div {
+      display: none;
+    }
+  }
+
+  &:hover {
+    td:nth-child(3) > div {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+`;

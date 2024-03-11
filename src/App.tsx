@@ -3,12 +3,18 @@ import { useState } from "react";
 import { Stack, CssBaseline } from "@mui/joy";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
-import { GraphQLRequestPanel } from "./components/GraphQLRequestPanel.tsx";
-import { GraphQLRequestsList } from "./components/GraphQLRequestsList.tsx";
-import { mockedGraphQLRequests } from "./mock/mockedGraphQLRequests.ts";
+import { GraphQLRequestPanel } from "./components/GraphQLRequestPanel";
+import { GraphQLRequestsList } from "./components/GraphQLRequestsList";
+import { useGraphQLRequests } from "./hooks/useGraphQLRequests";
 
+// TODO 1. Fix list overflow
+// TODO 2. Fix scroll animation in request view
+// TODO 3. Change Table header height
+// TODO 4. Add adaptivity for a tabs list
+// TODO 5. Make the accordion topics stand out more in headers view
 function App() {
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+  const graphQLRequests = useGraphQLRequests();
 
   const handleSelectRequest = (requestId: string) => {
     if (selectedRequestId === requestId) {
@@ -19,7 +25,7 @@ function App() {
     setSelectedRequestId(requestId);
   };
 
-  const selectedRequest = mockedGraphQLRequests.find((request) => request.id === selectedRequestId);
+  const selectedRequest = graphQLRequests.find((request) => request.id === selectedRequestId);
 
   return (
     <Stack direction="column" spacing={4} sx={{ height: "100%", position: "relative" }}>
@@ -31,7 +37,7 @@ function App() {
               type="short"
               selectedRequestId={selectedRequestId}
               onSelectRequest={handleSelectRequest}
-              requests={[...mockedGraphQLRequests]}
+              graphQLRequests={graphQLRequests}
             />
           </Panel>
           <PanelResizeHandle />
@@ -47,7 +53,7 @@ function App() {
           type="long"
           selectedRequestId={selectedRequestId}
           onSelectRequest={handleSelectRequest}
-          requests={[...mockedGraphQLRequests]}
+          graphQLRequests={graphQLRequests}
         />
       )}
     </Stack>

@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 
 import DataObjectIcon from "@mui/icons-material/DataObject";
-import { Box, CircularProgress, IconButton, Stack } from "@mui/joy";
+import { Box, CircularProgress, IconButton, Stack, styled } from "@mui/joy";
 
 import { useHighlight } from "../hooks/useHighlight";
 import { usePrettier } from "../hooks/usePrettier";
@@ -35,8 +35,8 @@ export const CodeView: FC<CodeViewProps> = ({ code, language, pretty: defaultPre
       }
       delay={300}
     >
-      <Stack direction="column" height="100%">
-        <Stack direction="row" spacing={1}>
+      <Stack direction="column" height="100%" paddingTop={1}>
+        <Stack direction="row" spacing={1} paddingBottom={1}>
           <IconButton
             variant="outlined"
             color="neutral"
@@ -53,12 +53,16 @@ export const CodeView: FC<CodeViewProps> = ({ code, language, pretty: defaultPre
           </IconButton>
           <CopyButton value={isPretty ? formattedCode! : code} />
         </Stack>
-        <Box sx={{ overflowX: "auto" }} flex="1 1 auto">
-          <pre>
+        <Box flex="1 1 auto">
+          <StyledPre>
             <code dangerouslySetInnerHTML={{ __html: markup }} />
-          </pre>
+          </StyledPre>
         </Box>
       </Stack>
     </DelayedLoader>
   );
 };
+
+const StyledPre = styled("pre")`
+  margin: 0;
+`;

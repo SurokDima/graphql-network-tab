@@ -19,5 +19,6 @@ const StyledJsnViewer = styled(JsonViewer)`
   --json-string: #98c379;
   --json-boolean: #d19a66;
   --json-null: #d19a66;
+  padding-top: ${({ theme }) => theme.spacing(1)};
   color: ${({ theme }) => theme.palette.neutral.plainColor};
 `;
