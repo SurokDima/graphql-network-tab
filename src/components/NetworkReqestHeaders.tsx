@@ -22,13 +22,17 @@ export const NetworkRequestHeaders: FC<NetworkRequestHeadersProps> = ({ networkR
               {
                 label: "Request URL",
                 value: (
-                  <Link href={networkRequest.url} target="_blank">
-                    {networkRequest.url}
+                  <Link href={networkRequest.request.url} target="_blank">
+                    {networkRequest.request.url}
                   </Link>
                 ),
-                copyValue: networkRequest.url,
+                copyValue: networkRequest.request.url,
               },
-              { label: "Method", value: networkRequest.method, copyValue: networkRequest.method },
+              {
+                label: "Method",
+                value: networkRequest.request.method,
+                copyValue: networkRequest.request.method,
+              },
               {
                 label: "Status",
                 value: <NetworkRequestStatus statusCode={networkRequest.response.statusCode} />,
@@ -42,7 +46,7 @@ export const NetworkRequestHeaders: FC<NetworkRequestHeadersProps> = ({ networkR
         <AccordionSummary>Request</AccordionSummary>
         <AccordionDetails>
           <Description
-            rows={[...networkRequest.headers.entries()].map(([key, value]) => ({
+            rows={[...networkRequest.request.headers.entries()].map(([key, value]) => ({
               label: key,
               value: value,
               copyValue: value,

@@ -11,7 +11,7 @@ type UseHighlightHookParams = {
 
 const createWorker = () => {
   try {
-    return new Worker(new URL("./highlightWorker.ts", import.meta.url));
+    return new Worker(new URL("./highlightWorker.ts", import.meta.url), { type: "module" });
   } catch (e) {
     return;
   }

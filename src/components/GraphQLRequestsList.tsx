@@ -1,28 +1,20 @@
-import { CSSProperties, FC } from "react";
+import { FC } from "react";
 
-import { Avatar, Sheet, Stack, Table, Typography } from "@mui/joy";
+import { Avatar, Sheet, Stack, Table, Typography, styled } from "@mui/joy";
 
 import { GraphQLRequest } from "../types/graphql-request.ts";
 
 import { NetworkRequestStatus } from "./NetworkRequestStatus.tsx";
 
 type GraphQLRequestsListProps = {
-  requests: GraphQLRequest[];
+  graphQLRequests: GraphQLRequest[];
   type: "short" | "long";
   selectedRequestId: string | null;
   onSelectRequest: (requestId: string) => void;
 };
 
-const MutationIcon: FC = () => {
-  return <Avatar color="danger">M</Avatar>;
-};
-
-const QueryIcon: FC = () => {
-  return <Avatar color="success">Q</Avatar>;
-};
-
 export const GraphQLRequestsList: FC<GraphQLRequestsListProps> = ({
-  requests,
+  graphQLRequests,
   type,
   selectedRequestId,
   onSelectRequest,
@@ -49,43 +41,63 @@ export const GraphQLRequestsList: FC<GraphQLRequestsListProps> = ({
           </tr>
         </thead>
         <tbody>
-          {requests.map((request) => (
-            <tr
-              key={request.id}
-              onClick={() => onSelectRequest(request.id)}
-              style={
-                request.id === selectedRequestId
-                  ? ({
-                      "--TableCell-dataBackground": "var(--TableCell-selectedBackground)",
-                      "--TableCell-headBackground": "var(--TableCell-selectedBackground)",
-                    } as CSSProperties)
-                  : {}
-              }
+          {graphQLRequests.map((graphQLRequest) => (
+            <TableRow
+              key={graphQLRequest.id}
+              onClick={() => onSelectRequest(graphQLRequest.id)}
+              selected={graphQLRequest.id === selectedRequestId}
             >
               {type === "long" ? (
                 <>
                   <td>
                     <Stack direction="row" alignItems="center" spacing={2}>
-                      {request.type === "mutation" ? <MutationIcon /> : <QueryIcon />}
-                      <Typography level="title-md">{request.name}</Typography>
+                      <GraphQLRequestIcon graphQLRequest={graphQLRequest} />
+                      <Typography level="title-md">{graphQLRequest.operation.name}</Typography>
                     </Stack>
                   </td>
                   <td>
-                    <NetworkRequestStatus statusCode={request.networkRequest.response.statusCode} />
+                    <NetworkRequestStatus
+                      statusCode={graphQLRequest.networkRequest.response.statusCode}
+                    />
                   </td>
                 </>
               ) : (
                 <td>
                   <Stack direction="row" alignItems="center" spacing={2}>
-                    {request.type === "mutation" ? <MutationIcon /> : <QueryIcon />}
-                    <Typography level="title-md">{request.name}</Typography>
+                    <GraphQLRequestIcon graphQLRequest={graphQLRequest} />
+                    <Typography level="title-md">{graphQLRequest.operation.name}</Typography>
                   </Stack>
                 </td>
               )}
-            </tr>
+            </TableRow>
           ))}
         </tbody>
       </Table>
     </Sheet>
   );
 };
+
+type GraphQLRequestIconProps = {
+  graphQLRequest: GraphQLRequest;
+};
+
+const GraphQLRequestIcon: FC<GraphQLRequestIconProps> = ({ graphQLRequest }) => {
+  return graphQLRequest.operation.type === "mutation" ? <MutationIcon /> : <QueryIcon />;
+};
+
+const MutationIcon: FC = () => {
+  return <Avatar color="danger">M</Avatar>;
+};
+
+const QueryIcon: FC = () => {
+  return <Avatar color="success">Q</Avatar>;
+};
+
+const TableRow = styled("tr")<{ selected: boolean }>(({ selected }) =>
+  selected
+    ? {
+        "--TableCell-dataBackground": "var(--TableCell-selectedBackground)",
+        "--TableCell-headBackground": "var(--TableCell-selectedBackground)",
+      }
+    : {}
+);

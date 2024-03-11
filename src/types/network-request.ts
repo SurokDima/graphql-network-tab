@@ -1,8 +1,11 @@
 export type NetworkRequest = {
   id: string;
-  url: string;
-  method: string;
-  headers: Headers;
+  request: {
+    url: string;
+    headers: Headers;
+    method: string;
+    body: string | null;
+  };
   response: {
     headers: Headers;
     statusCode: number;
