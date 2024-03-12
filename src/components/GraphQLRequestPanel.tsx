@@ -1,7 +1,7 @@
 import { FC } from "react";
 
 import { Close } from "@mui/icons-material";
-import { IconButton, Tab, TabList, TabPanel as JoyTabPanel, Tabs, styled } from "@mui/joy";
+import { IconButton, Tab, TabList, TabPanel as JoyTabPanel, Tabs, styled, Box } from "@mui/joy";
 
 import { GraphQLRequest } from "../types/graphql-request.ts";
 import { JsonView } from "../ui/JsonView.tsx";
@@ -41,10 +41,14 @@ export const GraphQLRequestPanel: FC<GraphQLRequestPanelProps> = ({ request, onC
         <GraphQLRequestView request={request} />
       </TabPanel>
       <TabPanel value={2}>
-        <JsonView json={JSON.parse(request.networkRequest.response.body)} />
+        <Box sx={{ padding: "0.75rem" }}>
+          <JsonView json={JSON.parse(request.networkRequest.response.body)} />
+        </Box>
       </TabPanel>
       <TabPanel value={3}>
-        <RawResponseView response={request.networkRequest.response.body} />
+        <Box sx={{ padding: "0.75rem" }}>
+          <RawResponseView response={request.networkRequest.response.body} />
+        </Box>
       </TabPanel>
     </Tabs>
   );
@@ -52,5 +56,7 @@ export const GraphQLRequestPanel: FC<GraphQLRequestPanelProps> = ({ request, onC
 
 const TabPanel = styled(JoyTabPanel)`
   padding-top: 0;
+  padding-left: 0;
+  padding-right: 0;
   overflow: auto;
 `;

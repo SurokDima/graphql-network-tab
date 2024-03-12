@@ -2,6 +2,7 @@ import { FC, useState } from "react";
 
 import DataObjectIcon from "@mui/icons-material/DataObject";
 import { Box, CircularProgress, IconButton, Stack, styled } from "@mui/joy";
+import { SxProps } from "@mui/joy/styles/types";
 
 import { useHighlight } from "../hooks/useHighlight";
 import { usePrettier } from "../hooks/usePrettier";
@@ -13,9 +14,15 @@ type CodeViewProps = {
   code: string;
   language: "json" | "graphql";
   pretty?: boolean;
+  sx?: SxProps;
 };
 
-export const CodeView: FC<CodeViewProps> = ({ code, language, pretty: defaultPretty = true }) => {
+export const CodeView: FC<CodeViewProps> = ({
+  code,
+  language,
+  sx,
+  pretty: defaultPretty = true,
+}) => {
   const [isPretty, setIsPretty] = useState(defaultPretty);
   const { formattedCode, isLoading: isPrettierLoading } = usePrettier(code, language);
 
@@ -35,7 +42,13 @@ export const CodeView: FC<CodeViewProps> = ({ code, language, pretty: defaultPre
       }
       delay={300}
     >
-      <Stack direction="column" height="100%" paddingTop={1}>
+      <Stack
+        sx={{
+          height: "100%",
+          flexDirection: "column",
+          ...sx,
+        }}
+      >
         <Stack direction="row" spacing={1} paddingBottom={1}>
           <IconButton
             variant="outlined"
