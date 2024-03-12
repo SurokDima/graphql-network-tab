@@ -1,6 +1,14 @@
 import { FC } from "react";
 
-import { Accordion, AccordionDetails, AccordionGroup, AccordionSummary, Link } from "@mui/joy";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionGroup,
+  AccordionSummary,
+  Link,
+  accordionDetailsClasses,
+  accordionSummaryClasses,
+} from "@mui/joy";
 
 import { NetworkRequest } from "../types/network-request.ts";
 import { Description } from "../ui/Description.tsx";
@@ -13,10 +21,23 @@ export type NetworkRequestHeadersProps = {
 
 export const NetworkRequestHeaders: FC<NetworkRequestHeadersProps> = ({ networkRequest }) => {
   return (
-    <AccordionGroup defaultChecked>
+    <AccordionGroup
+      sx={{
+        [`& .${accordionSummaryClasses.button}:hover`]: {
+          bgcolor: "transparent",
+        },
+        [`& .${accordionDetailsClasses.content}`]: {
+          boxShadow: (theme) => `inset 0 1px ${theme.vars.palette.divider}`,
+          [`&.${accordionDetailsClasses.expanded}`]: {
+            paddingBlock: "0.75rem",
+          },
+        },
+      }}
+      defaultChecked
+    >
       <Accordion defaultExpanded>
         <AccordionSummary>General</AccordionSummary>
-        <AccordionDetails>
+        <AccordionDetails variant="soft">
           <Description
             rows={[
               {
@@ -44,7 +65,7 @@ export const NetworkRequestHeaders: FC<NetworkRequestHeadersProps> = ({ networkR
       </Accordion>
       <Accordion defaultExpanded>
         <AccordionSummary>Request</AccordionSummary>
-        <AccordionDetails>
+        <AccordionDetails variant="soft">
           <Description
             rows={[...networkRequest.request.headers.entries()].map(([key, value]) => ({
               label: key,
@@ -56,7 +77,7 @@ export const NetworkRequestHeaders: FC<NetworkRequestHeadersProps> = ({ networkR
       </Accordion>
       <Accordion defaultExpanded>
         <AccordionSummary>Response</AccordionSummary>
-        <AccordionDetails>
+        <AccordionDetails variant="soft">
           <Description
             rows={[...networkRequest.response.headers.entries()].map(([key, value]) => ({
               label: key,
