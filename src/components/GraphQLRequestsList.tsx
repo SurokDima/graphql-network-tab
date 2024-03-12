@@ -20,7 +20,7 @@ export const GraphQLRequestsList: FC<GraphQLRequestsListProps> = ({
   onSelectRequest,
 }) => {
   return (
-    <Sheet>
+    <Sheet sx={{ height: "100%", overflowY: "auto" }}>
       <Table
         stickyHeader
         hoverRow

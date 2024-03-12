@@ -7,11 +7,9 @@ import { GraphQLRequestPanel } from "./components/GraphQLRequestPanel";
 import { GraphQLRequestsList } from "./components/GraphQLRequestsList";
 import { useGraphQLRequests } from "./hooks/useGraphQLRequests";
 
-// TODO 1. Fix list overflow
-// TODO 2. Fix scroll animation in request view
-// TODO 3. Change Table header height
-// TODO 4. Add adaptivity for a tabs list
-// TODO 5. Make the accordion topics stand out more in headers view
+// TODO Fix list horizontal overflow
+// TODO Change Table header height
+// TODO Add adaptivity for a tabs list
 function App() {
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const graphQLRequests = useGraphQLRequests();
