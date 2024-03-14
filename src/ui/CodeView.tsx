@@ -51,6 +51,7 @@ export const CodeView: FC<CodeViewProps> = ({
       >
         <Stack direction="row" spacing={1} paddingBottom={1}>
           <IconButton
+            size="sm"
             variant="outlined"
             color="neutral"
             onClick={() => setIsPretty(!isPretty)}

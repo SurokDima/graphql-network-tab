@@ -8,6 +8,7 @@ import {
   Link,
   accordionDetailsClasses,
   accordionSummaryClasses,
+  styled,
 } from "@mui/joy";
 
 import { NetworkRequest } from "../types/network-request.ts";
@@ -22,6 +23,7 @@ export type NetworkRequestHeadersProps = {
 export const NetworkRequestHeaders: FC<NetworkRequestHeadersProps> = ({ networkRequest }) => {
   return (
     <AccordionGroup
+      size="sm"
       sx={{
         [`& .${accordionSummaryClasses.button}:hover`]: {
           bgcolor: "transparent",
@@ -36,8 +38,8 @@ export const NetworkRequestHeaders: FC<NetworkRequestHeadersProps> = ({ networkR
       defaultChecked
     >
       <Accordion defaultExpanded>
-        <AccordionSummary>General</AccordionSummary>
-        <AccordionDetails variant="soft">
+        <StyledAccordionSummary>General</StyledAccordionSummary>
+        <AccordionDetails>
           <Description
             rows={[
               {
@@ -64,8 +66,8 @@ export const NetworkRequestHeaders: FC<NetworkRequestHeadersProps> = ({ networkR
         </AccordionDetails>
       </Accordion>
       <Accordion defaultExpanded>
-        <AccordionSummary>Request</AccordionSummary>
-        <AccordionDetails variant="soft">
+        <StyledAccordionSummary>Request</StyledAccordionSummary>
+        <AccordionDetails>
           <Description
             rows={[...networkRequest.request.headers.entries()].map(([key, value]) => ({
               label: key,
@@ -76,8 +78,8 @@ export const NetworkRequestHeaders: FC<NetworkRequestHeadersProps> = ({ networkR
         </AccordionDetails>
       </Accordion>
       <Accordion defaultExpanded>
-        <AccordionSummary>Response</AccordionSummary>
-        <AccordionDetails variant="soft">
+        <StyledAccordionSummary>Response</StyledAccordionSummary>
+        <AccordionDetails>
           <Description
             rows={[...networkRequest.response.headers.entries()].map(([key, value]) => ({
               label: key,
@@ -90,3 +92,7 @@ export const NetworkRequestHeaders: FC<NetworkRequestHeadersProps> = ({ networkR
     </AccordionGroup>
   );
 };
+
+const StyledAccordionSummary = styled(AccordionSummary)`
+  background: ${({ theme }) => theme.palette.background.surface};
+`;

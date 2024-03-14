@@ -8,8 +8,8 @@ export type NetworkRequestStatusProps = {
 
 export const NetworkRequestStatus: FC<NetworkRequestStatusProps> = ({ statusCode }) => {
   return (
-    <Badge color={mapStatusCodeToColor(statusCode)}>
-      <Typography level="body-md">{statusCode}</Typography>
+    <Badge size="sm" color={mapStatusCodeToColor(statusCode)}>
+      <Typography level="body-sm">{statusCode}</Typography>
     </Badge>
   );
 };

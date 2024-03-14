@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { getGraphQLRequestDetails } from "../services/graphQL-parser";
 import { GraphQLRequest } from "../types/graphql-request";
@@ -24,7 +24,11 @@ export const useGraphQLRequests = () => {
     },
   });
 
-  return graphQLRequests;
+  const clearRequests = useCallback(() => {
+    setGraphQLRequests([]);
+  }, []);
+
+  return { graphQLRequests, clearRequests };
 };
 
 const mapNetworkToGraphQLRequest = (networkRequest: NetworkRequest): GraphQLRequest | null => {
