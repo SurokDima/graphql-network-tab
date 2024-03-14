@@ -17,6 +17,7 @@ export const CopyButton: FC<CopyButtonProps> = ({ value }) => {
 
   return (
     <IconButton
+      size="sm"
       onClick={() => {
         copy(value);
       }}

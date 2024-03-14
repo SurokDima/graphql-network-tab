@@ -8,6 +8,7 @@ import {
   accordionSummaryClasses,
   accordionDetailsClasses,
   Box,
+  styled,
 } from "@mui/joy";
 
 import { GraphQLRequest } from "../types/graphql-request.ts";
@@ -21,6 +22,7 @@ export const GraphQLRequestView: FC<GraphQLRequestViewProps> = ({ request }) => 
   return (
     <Box>
       <AccordionGroup
+        size="sm"
         sx={{
           [`& .${accordionSummaryClasses.button}:hover`]: {
             bgcolor: "transparent",
@@ -34,7 +36,7 @@ export const GraphQLRequestView: FC<GraphQLRequestViewProps> = ({ request }) => 
         }}
       >
         <Accordion defaultExpanded>
-          <AccordionSummary>Request</AccordionSummary>
+          <StyledAccordionSummary>Request</StyledAccordionSummary>
           <AccordionDetails variant="soft">
             <Box sx={{ overflowX: "auto" }}>
               <CodeView
@@ -48,7 +50,7 @@ export const GraphQLRequestView: FC<GraphQLRequestViewProps> = ({ request }) => 
           </AccordionDetails>
         </Accordion>
         <Accordion defaultExpanded>
-          <AccordionSummary>Variables</AccordionSummary>
+          <StyledAccordionSummary>Variables</StyledAccordionSummary>
           <AccordionDetails variant="soft">
             <Box sx={{ overflowX: "auto" }}>
               <CodeView
@@ -65,3 +67,7 @@ export const GraphQLRequestView: FC<GraphQLRequestViewProps> = ({ request }) => 
     </Box>
   );
 };
+
+const StyledAccordionSummary = styled(AccordionSummary)`
+  background: ${({ theme }) => theme.palette.background.surface};
+`;
