@@ -18,6 +18,7 @@ export const Description: FC<DescriptionProps> = ({ rows }) => {
   return (
     <>
       <Table
+        size="sm"
         sx={{
           "--TableCell-height": "50px",
         }}

@@ -17,10 +17,17 @@ type GraphQLRequestPanelProps = {
 
 export const GraphQLRequestPanel: FC<GraphQLRequestPanelProps> = ({ request, onClose }) => {
   return (
-    <Tabs sx={{ height: "100%" }}>
+    <Tabs
+      size="sm"
+      sx={{
+        height: "100%",
+        borderLeft: (theme) => `2px solid ${theme.palette.divider}`,
+      }}
+    >
       {/* TODO: Add adaptivity for a tabs list*/}
-      <TabList>
+      <TabList sx={{ boxShadow: (theme) => `inset 0 -2px ${theme.palette.divider}` }}>
         <IconButton
+          size="sm"
           sx={{
             borderRadius: "0",
           }}
@@ -59,4 +66,5 @@ const TabPanel = styled(JoyTabPanel)`
   padding-left: 0;
   padding-right: 0;
   overflow: auto;
+  background: ${({ theme }) => theme.palette.background.level1};
 `;
