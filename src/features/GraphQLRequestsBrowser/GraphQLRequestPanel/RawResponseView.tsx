@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { CodeView } from "../ui/CodeView";
+import { CodeView } from "../../../ui/CodeView";
 
 type RawResponseViewProps = {
   response: string;

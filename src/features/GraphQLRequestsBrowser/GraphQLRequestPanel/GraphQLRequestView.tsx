@@ -11,8 +11,8 @@ import {
   styled,
 } from "@mui/joy";
 
-import { GraphQLRequest } from "../types/graphql-request.ts";
-import { CodeView } from "../ui/CodeView.tsx";
+import { GraphQLRequest } from "../../../types/graphQL-request";
+import { CodeView } from "../../../ui/CodeView";
 
 type GraphQLRequestViewProps = {
   request: GraphQLRequest;
@@ -42,9 +42,9 @@ export const GraphQLRequestView: FC<GraphQLRequestViewProps> = ({ request }) => 
               <CodeView
                 code={request.rawGraphQL}
                 language="graphql"
-                sx={{
-                  overflowY: "hidden",
-                }}
+                // sx={{
+                //   overflowY: "hidden",
+                // }}
               />
             </Box>
           </AccordionDetails>
@@ -56,9 +56,9 @@ export const GraphQLRequestView: FC<GraphQLRequestViewProps> = ({ request }) => 
               <CodeView
                 code={JSON.stringify(request.variables)}
                 language="json"
-                sx={{
-                  overflowY: "hidden",
-                }}
+                // sx={{
+                //   overflowY: "hidden",
+                // }}
               />
             </Box>
           </AccordionDetails>

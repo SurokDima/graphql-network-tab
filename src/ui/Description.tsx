@@ -2,7 +2,7 @@ import { FC, ReactNode, useState } from "react";
 
 import { Snackbar, Table, styled } from "@mui/joy";
 
-import { CopyButton } from "./CopyButton.tsx";
+import { CopyButton } from "./CopyButton";
 
 export type DescriptionProps = {
   rows: {
