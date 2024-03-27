@@ -1,20 +1,16 @@
-import { FC, useMemo } from "react";
+import { FC } from "react";
 
-import { Alert, Avatar, Sheet, Stack, Table, Typography, styled } from "@mui/joy";
+import { Alert, Sheet, Stack, Table, Typography, styled } from "@mui/joy";
 
-import { GraphQLOperationType, GraphQLRequest } from "../types/graphql-request.ts";
-import { isDefined } from "../utils/boolean.utils.ts";
-import { pipe } from "../utils/function.utils.ts";
-
-import { NetworkRequestStatus } from "./NetworkRequestStatus.tsx";
+import { GraphQLRequestIcon } from "../../../components/GraphQLRequestIcon";
+import { NetworkRequestStatus } from "../../../components/NetworkRequestStatus";
+import { GraphQLRequest } from "../../../types/graphQL-request";
 
 type GraphQLRequestsListProps = {
   graphQLRequests: GraphQLRequest[];
   type: "short" | "long";
   selectedRequestId: string | null;
   onSelectRequest: (requestId: string) => void;
-  startsWith?: string;
-  operationTypes?: GraphQLOperationType[];
 };
 
 export const GraphQLRequestsList: FC<GraphQLRequestsListProps> = ({
@@ -22,18 +18,7 @@ export const GraphQLRequestsList: FC<GraphQLRequestsListProps> = ({
   type,
   selectedRequestId,
   onSelectRequest,
-  startsWith,
-  operationTypes,
 }) => {
-  const filteredGraphQLRequests = useMemo(
-    () =>
-      filterGraphQLRequests(graphQLRequests, {
-        startsWith,
-        operationTypes,
-      }),
-    [graphQLRequests, startsWith, operationTypes]
-  );
-
   return (
     <Sheet
       sx={{
@@ -66,7 +51,7 @@ export const GraphQLRequestsList: FC<GraphQLRequestsListProps> = ({
             </tr>
           </thead>
           <tbody>
-            {filteredGraphQLRequests.map((graphQLRequest) => (
+            {graphQLRequests.map((graphQLRequest) => (
               <TableRow
                 key={graphQLRequest.id}
                 onClick={() => onSelectRequest(graphQLRequest.id)}
@@ -76,7 +61,7 @@ export const GraphQLRequestsList: FC<GraphQLRequestsListProps> = ({
                   <>
                     <td>
                       <Stack direction="row" alignItems="center" spacing={2}>
-                        <GraphQLRequestIcon graphQLRequest={graphQLRequest} />
+                        <GraphQLRequestIcon operationType={graphQLRequest.operation.type} />
                         <Typography level="title-sm">{graphQLRequest.operation.name}</Typography>
                       </Stack>
                     </td>
@@ -89,7 +74,7 @@ export const GraphQLRequestsList: FC<GraphQLRequestsListProps> = ({
                 ) : (
                   <td>
                     <Stack direction="row" alignItems="center" spacing={2}>
-                      <GraphQLRequestIcon graphQLRequest={graphQLRequest} />
+                      <GraphQLRequestIcon operationType={graphQLRequest.operation.type} />
                       <Typography level="title-sm">{graphQLRequest.operation.name}</Typography>
                     </Stack>
                   </td>
@@ -98,7 +83,7 @@ export const GraphQLRequestsList: FC<GraphQLRequestsListProps> = ({
             ))}
           </tbody>
         </Table>
-        {filteredGraphQLRequests.length === 0 && (
+        {graphQLRequests.length === 0 && (
           <Stack justifyContent="center" alignItems="center" flex="1 1 auto">
             <Alert variant="plain" color="neutral">
               No requests found
@@ -110,30 +95,6 @@ export const GraphQLRequestsList: FC<GraphQLRequestsListProps> = ({
   );
 };
 
-type GraphQLRequestIconProps = {
-  graphQLRequest: GraphQLRequest;
-};
-
-const GraphQLRequestIcon: FC<GraphQLRequestIconProps> = ({ graphQLRequest }) => {
-  return graphQLRequest.operation.type === "mutation" ? <MutationIcon /> : <QueryIcon />;
-};
-
-const MutationIcon: FC = () => {
-  return (
-    <Avatar size="sm" color="danger">
-      M
-    </Avatar>
-  );
-};
-
-const QueryIcon: FC = () => {
-  return (
-    <Avatar size="sm" color="success">
-      Q
-    </Avatar>
-  );
-};
-
 const TableRow = styled("tr")<{ selected: boolean }>(({ selected }) =>
   selected
     ? {
@@ -142,29 +103,3 @@ const TableRow = styled("tr")<{ selected: boolean }>(({ selected }) =>
       }
     : {}
 );
-
-const filterGraphQLRequests = (
-  graphQLRequests: GraphQLRequest[],
-  { startsWith, operationTypes }: { startsWith?: string; operationTypes?: GraphQLOperationType[] }
-) => {
-  const filters = [
-    startsWith ? filterByName(startsWith) : undefined,
-    operationTypes ? filterByOperationTypes(operationTypes) : undefined,
-  ];
-
-  return pipe(...filters.filter(isDefined))(graphQLRequests);
-};
-
-const filterByOperationTypes =
-  (operationTypes: GraphQLOperationType[]) =>
-  (graphQLRequests: GraphQLRequest[]): GraphQLRequest[] =>
-    graphQLRequests.filter((graphQLRequest) =>
-      operationTypes.includes(graphQLRequest.operation.type)
-    );
-
-const filterByName =
-  (startsWith: string) =>
-  (graphQLRequests: GraphQLRequest[]): GraphQLRequest[] =>
-    graphQLRequests.filter((graphQLRequest) =>
-      graphQLRequest.operation.name.startsWith(startsWith)
-    );

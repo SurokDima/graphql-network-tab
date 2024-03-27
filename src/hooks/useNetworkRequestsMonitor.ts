@@ -2,7 +2,7 @@ import { nanoid } from "nanoid";
 import { useCallback, useEffect } from "react";
 
 import { chromeProvider, getContentAsync, getHARLogAsync } from "../services/chrome-provider";
-import { NetworkRequest } from "../types/network-request";
+import { Headers, NetworkRequest } from "../types/network-request";
 
 export const useNetworkRequestsMonitor = ({
   onNewRequest,
@@ -62,9 +62,11 @@ const mapRequestToNetworkRequest = async (
 
 const mapHeaders = (headers: chrome.devtools.network.Request["request"]["headers"]): Headers => {
   return headers.reduce((acc, header) => {
-    acc.set(header.name, header.value);
-    return acc;
-  }, new Headers());
+    return {
+      ...acc,
+      [header.name]: header.value,
+    };
+  }, {});
 };
 
 const isChromeRequest = (

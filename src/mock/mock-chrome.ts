@@ -5,6 +5,58 @@ import { mockRequests } from "./mock-network-requests";
 const removeListeners: Record<string, () => void> = {};
 
 export const mockChrome = {
+  tabs: {
+    query: (_: chrome.tabs.QueryInfo, cb: (tabs: chrome.tabs.Tab[]) => void) => {
+      cb([
+        {
+          id: 1,
+          url: "https://api.github.com/graphql",
+          title: "GitHub",
+          active: true,
+          autoDiscardable: false,
+          discarded: false,
+          favIconUrl: "https://github.githubassets.com/favicons/favicon.png",
+          height: 768,
+          highlighted: true,
+          incognito: false,
+          index: 0,
+          mutedInfo: { muted: false },
+          pinned: false,
+          selected: true,
+          status: "complete",
+          width: 1366,
+          windowId: 1,
+          groupId: -1,
+        },
+      ]);
+    },
+  },
+  storage: {
+    local: {
+      get: (keys: string | string[] | null, cb: (items: Record<string, unknown>) => void) => {
+        const keysArr =
+          keys === null ? Object.keys(localStorage) : Array.isArray(keys) ? keys : [keys];
+
+        const items = keysArr.reduce((acc, key) => {
+          return { ...acc, [key]: JSON.parse(localStorage.getItem(key) ?? "null") };
+        }, {});
+
+        cb(items);
+      },
+      set: (items: Record<string, unknown>) => {
+        Object.entries(items).forEach(([key, value]) => {
+          localStorage.setItem(key, JSON.stringify(value));
+        });
+      },
+      remove: (keys: string | string[], cb: () => void) => {
+        const keysArr = Array.isArray(keys) ? keys : [keys];
+        keysArr.forEach((key) => {
+          localStorage.removeItem(key);
+        });
+        cb();
+      },
+    },
+  },
   devtools: {
     panels: {
       themeName: "dark",

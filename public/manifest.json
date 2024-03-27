@@ -23,6 +23,6 @@
     }
   ],
   "background": {
-    "service_worker": "assets/serviceWorker.js"
+    "service_worker": "service-worker/service-worker.iife.js"
   }
 }

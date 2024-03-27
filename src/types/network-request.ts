@@ -12,3 +12,5 @@ export type NetworkRequest = {
     body: string;
   };
 };
+
+export type Headers = Record<string, string>;
