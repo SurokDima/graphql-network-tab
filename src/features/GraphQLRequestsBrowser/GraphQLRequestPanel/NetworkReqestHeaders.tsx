@@ -11,10 +11,9 @@ import {
   styled,
 } from "@mui/joy";
 
-import { NetworkRequest } from "../types/network-request.ts";
-import { Description } from "../ui/Description.tsx";
-
-import { NetworkRequestStatus } from "./NetworkRequestStatus.tsx";
+import { NetworkRequestStatus } from "../../../components/NetworkRequestStatus";
+import { NetworkRequest } from "../../../types/network-request";
+import { Description } from "../../../ui/Description";
 
 export type NetworkRequestHeadersProps = {
   networkRequest: NetworkRequest;
@@ -25,6 +24,7 @@ export const NetworkRequestHeaders: FC<NetworkRequestHeadersProps> = ({ networkR
     <AccordionGroup
       size="sm"
       sx={{
+        overflowY: "auto",
         [`& .${accordionSummaryClasses.button}:hover`]: {
           bgcolor: "transparent",
         },
@@ -69,7 +69,7 @@ export const NetworkRequestHeaders: FC<NetworkRequestHeadersProps> = ({ networkR
         <StyledAccordionSummary>Request</StyledAccordionSummary>
         <AccordionDetails>
           <Description
-            rows={[...networkRequest.request.headers.entries()].map(([key, value]) => ({
+            rows={Object.entries(networkRequest.request.headers).map(([key, value]) => ({
               label: key,
               value: value,
               copyValue: value,
@@ -81,7 +81,7 @@ export const NetworkRequestHeaders: FC<NetworkRequestHeadersProps> = ({ networkR
         <StyledAccordionSummary>Response</StyledAccordionSummary>
         <AccordionDetails>
           <Description
-            rows={[...networkRequest.response.headers.entries()].map(([key, value]) => ({
+            rows={Object.entries(networkRequest.response.headers).map(([key, value]) => ({
               label: key,
               value: value,
               copyValue: value,

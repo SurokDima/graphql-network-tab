@@ -2,7 +2,7 @@ import { OperationDefinitionNode, FieldNode } from "graphql";
 
 import { gql } from "graphql-tag";
 
-import { GraphQLOperationType } from "../types/graphql-request";
+import { GraphQLOperationType } from "../types/graphQL-request";
 import { NetworkRequest } from "../types/network-request";
 import { Err, Ok, Result, wrap } from "../types/result";
 

@@ -9,7 +9,7 @@ type JsonViewProps = {
 };
 
 export const JsonView: FC<JsonViewProps> = ({ json }) => {
-  return <StyledJsnViewer src={json} />;
+  return <StyledJsnViewer src={json} collapsed={1} displaySize={true} />;
 };
 
 const StyledJsnViewer = styled(JsonViewer)`

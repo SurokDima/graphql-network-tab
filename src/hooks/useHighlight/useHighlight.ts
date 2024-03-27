@@ -1,7 +1,7 @@
 import hljs from "highlight.js";
 import { useEffect, useState } from "react";
 
-import { HighlightLanguage, MessagePayload } from "./types.ts";
+import { HighlightLanguage, MessagePayload } from "./types";
 
 type UseHighlightHookParams = {
   language: HighlightLanguage;
