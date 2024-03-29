@@ -17,12 +17,12 @@
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],
-      "js": ["assets/contentScript.js"],
+      "js": ["content-script/content-script.iife.js"],
       "run_at": "document_start",
       "all_frames": true
     }
   ],
   "background": {
-    "service_worker": "assets/serviceWorker.js"
+    "service_worker": "service-worker/service-worker.iife.js"
   }
 }

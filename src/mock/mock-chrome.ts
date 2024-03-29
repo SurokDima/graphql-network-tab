@@ -1,4 +1,4 @@
-import { noop } from "../utils/function.utils";
+import { noop } from "../modules/devtools-page/utils/function.utils";
 
 import { mockRequests } from "./mock-network-requests";
 
