@@ -29,15 +29,16 @@ export const GraphQLRequestsListPanel: FC<GraphQLRequestsListPanelProps> = ({
   const [operationTypes, { has: isOperationTypeEnabled, toggle: toggleOperationType }] =
     useSet<GraphQLOperationType>(["query", "mutation"]);
 
+  const [startsWith, setStartsWith] = useState("");
+
   const filteredGraphQLRequests = useMemo(
     () =>
       filterGraphQLRequests(graphQLRequests, {
         operationTypes,
+        startsWith,
       }),
-    [graphQLRequests, operationTypes]
+    [graphQLRequests, operationTypes, startsWith]
   );
-
-  const [startsWith, setStartsWith] = useState("");
 
   return (
     <Stack height="100%" direction="column">

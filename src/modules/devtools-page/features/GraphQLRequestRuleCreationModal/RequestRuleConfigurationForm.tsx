@@ -69,7 +69,7 @@ export const RequestRuleConfigurationForm: FC<RequestRuleConfigurationFormProps>
     <Stack spacing={3}>
       <Stack spacing={1}>
         <FormControl error={!!errors.scenarioName}>
-          <FormLabel>GraphQL endpoint</FormLabel>
+          <FormLabel>Scenario name</FormLabel>
           <Controller
             name="scenarioName"
             control={control}

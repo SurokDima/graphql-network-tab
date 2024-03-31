@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { Skeleton, Stack, Table, Typography, styled } from "@mui/joy";
+import { Alert, Skeleton, Stack, Table, Typography, styled } from "@mui/joy";
 
 import { GraphQLRequestRule } from "../../../common/types/graphQL-request-rule";
 import { InlineAlert } from "../../ui/InlineAlert";
@@ -21,85 +21,95 @@ export const GraphQLRequestRulesList: FC<GraphQLRequestRulesListProps> = ({
   onSelectRule,
 }) => {
   return (
-    <Table
-      size="sm"
-      stickyHeader
-      hoverRow={!loading && !error}
-      sx={{
-        "--TableCell-selectedBackground": (theme) => theme.vars.palette.primary.softBg,
-        "& th": {
-          height: "33px",
-        },
-      }}
-    >
-      <thead>
-        <tr>
-          <th>Operation name</th>
-          <th>Endpoint</th>
-        </tr>
-      </thead>
-      <tbody>
-        {error ? (
+    <>
+      <Table
+        size="sm"
+        stickyHeader
+        hoverRow={!loading && !error}
+        sx={{
+          "--TableCell-selectedBackground": (theme) => theme.vars.palette.primary.softBg,
+          "& th": {
+            height: "33px",
+          },
+        }}
+      >
+        <thead>
           <tr>
-            <td colSpan={2}>
-              <Stack direction="column" height="100%" justifyContent="center" alignItems="center">
-                <InlineAlert type="error" message="Failed to retrieve graphQL request rules" />
-              </Stack>
-            </td>
+            <th>Operation name</th>
+            <th>Endpoint</th>
           </tr>
-        ) : loading ? (
-          <>
-            <TableRow selected={false}>
-              <td>
-                <Skeleton variant="text" level="title-sm" sx={{ width: "150px" }} />
-              </td>
-              <td>
-                <Skeleton variant="text" sx={{ width: "300px" }} />
-              </td>
-            </TableRow>
-            <TableRow selected={false}>
-              <td>
-                <Skeleton variant="text" level="title-sm" sx={{ width: "150px" }} />
-              </td>
-              <td>
-                <Skeleton variant="text" sx={{ width: "300px" }} />
-              </td>
-            </TableRow>
-            <TableRow selected={false}>
-              <td>
-                <Skeleton variant="text" level="title-sm" sx={{ width: "150px" }} />
-              </td>
-              <td>
-                <Skeleton variant="text" sx={{ width: "300px" }} />
-              </td>
-            </TableRow>
-            <TableRow selected={false}>
-              <td>
-                <Skeleton variant="text" level="title-sm" sx={{ width: "150px" }} />
-              </td>
-              <td>
-                <Skeleton variant="text" sx={{ width: "300px" }} />
-              </td>
-            </TableRow>
-          </>
-        ) : (
-          rules.map((rule) => (
-            <TableRow
-              selected={rule.id === selectedRuleId}
-              key={rule.id}
-              onClick={() => onSelectRule(rule.id)}
-            >
-              <td>
-                <Stack direction="row" alignItems="center" spacing={2}>
-                  <Typography level="title-sm">{rule.operationName}</Typography>
+        </thead>
+        <tbody>
+          {error ? (
+            <tr>
+              <td colSpan={2}>
+                <Stack direction="column" height="100%" justifyContent="center" alignItems="center">
+                  <InlineAlert type="error" message="Failed to retrieve graphQL request rules" />
                 </Stack>
               </td>
-              <td>{rule.endpoint}</td>
-            </TableRow>
-          ))
-        )}
-      </tbody>
-    </Table>
+            </tr>
+          ) : loading ? (
+            <>
+              <TableRow selected={false}>
+                <td>
+                  <Skeleton variant="text" level="title-sm" sx={{ width: "150px" }} />
+                </td>
+                <td>
+                  <Skeleton variant="text" sx={{ width: "300px" }} />
+                </td>
+              </TableRow>
+              <TableRow selected={false}>
+                <td>
+                  <Skeleton variant="text" level="title-sm" sx={{ width: "150px" }} />
+                </td>
+                <td>
+                  <Skeleton variant="text" sx={{ width: "300px" }} />
+                </td>
+              </TableRow>
+              <TableRow selected={false}>
+                <td>
+                  <Skeleton variant="text" level="title-sm" sx={{ width: "150px" }} />
+                </td>
+                <td>
+                  <Skeleton variant="text" sx={{ width: "300px" }} />
+                </td>
+              </TableRow>
+              <TableRow selected={false}>
+                <td>
+                  <Skeleton variant="text" level="title-sm" sx={{ width: "150px" }} />
+                </td>
+                <td>
+                  <Skeleton variant="text" sx={{ width: "300px" }} />
+                </td>
+              </TableRow>
+            </>
+          ) : (
+            rules.map((rule) => (
+              <TableRow
+                selected={rule.id === selectedRuleId}
+                key={rule.id}
+                onClick={() => onSelectRule(rule.id)}
+              >
+                <td>
+                  <Stack direction="row" alignItems="center" spacing={2}>
+                    <Typography level="title-sm">{rule.operationName}</Typography>
+                  </Stack>
+                </td>
+                <td>{rule.endpoint}</td>
+              </TableRow>
+            ))
+          )}
+        </tbody>
+      </Table>
+
+      {rules.length === 0 && (
+        <Stack justifyContent="center" alignItems="center" flex="1 1 auto">
+          <Alert variant="plain" color="neutral">
+            No requests found
+          </Alert>
+        </Stack>
+      )}
+    </>
   );
 };
 
