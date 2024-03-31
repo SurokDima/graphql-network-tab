@@ -23,7 +23,12 @@ export const GraphQLRequestRulesBrowser: FC = () => {
       <Stack direction="column" sx={{ position: "relative", height: "100%" }}>
         <PanelGroup direction="horizontal">
           <Panel>
-            <Stack height="100%" direction="column" justifyContent="space-between">
+            <Stack
+              height="100%"
+              direction="column"
+              justifyContent="space-between"
+              sx={{ background: (theme) => theme.palette.background.surface }}
+            >
               <GraphQLRequestRulesList
                 rules={graphQLRules}
                 error={error}
@@ -53,11 +58,13 @@ export const GraphQLRequestRulesBrowser: FC = () => {
           )}
         </PanelGroup>
       </Stack>
-      <GraphQLRequestRuleCreationModal
-        isOpen={isModalOpen}
-        onSubmit={() => setIsModalOpen(false)}
-        onClose={() => setIsModalOpen(false)}
-      />
+      {isModalOpen && (
+        <GraphQLRequestRuleCreationModal
+          isOpen={isModalOpen}
+          onSubmit={() => setIsModalOpen(false)}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </>
   );
 };

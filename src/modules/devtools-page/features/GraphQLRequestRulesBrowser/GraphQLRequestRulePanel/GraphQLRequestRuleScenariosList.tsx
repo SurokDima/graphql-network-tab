@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 import { Button } from "@mui/joy";
 
@@ -23,6 +23,11 @@ export const GraphQLRequestRuleScenariosList: FC<GraphQLRequestRuleScenariosList
   const { setActiveScenario, loading } = useSetActiveScenario();
   const [touched, setTouched] = useState(false);
   const [changedActiveScenarioId, setChangedActiveScenarioId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setChangedActiveScenarioId(null);
+    setTouched(false);
+  }, [activeScenarioId, scenarios]);
 
   const handleSave = async () => {
     if (!changedActiveScenarioId) return;
@@ -49,6 +54,8 @@ export const GraphQLRequestRuleScenariosList: FC<GraphQLRequestRuleScenariosList
           </Button>
         )}
         onActiveScenarioChange={(scenarioId) => {
+          if (!touched && scenarioId === activeScenarioId) return;
+
           setChangedActiveScenarioId(scenarioId);
           setTouched(true);
         }}
