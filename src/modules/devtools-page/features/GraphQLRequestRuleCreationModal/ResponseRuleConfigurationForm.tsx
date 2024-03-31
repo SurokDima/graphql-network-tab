@@ -64,7 +64,7 @@ export const ResponseRuleConfigurationForm: FC<ResponseRuleConfigurationFormProp
                 {errors.statusCode.message}
               </>
             ) : (
-              "The URL of the GraphQL endpoint"
+              "Status code for the response"
             )}
           </FormHelperText>
         </FormControl>

@@ -1,6 +1,7 @@
 import { mockChrome } from "../../../mock/mock-chrome";
 
-export const chromeProvider = typeof chrome === "undefined" ? mockChrome : chrome;
+export const chromeProvider =
+  typeof chrome === "undefined" || !chrome.storage || !chrome.devtools ? mockChrome : chrome;
 
 export const getHARLogAsync = (): Promise<chrome.devtools.network.HARLog> => {
   return new Promise<chrome.devtools.network.HARLog>((resolve) => {

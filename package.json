@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --config ./src/modules/devtools-page/vite.config.ts",
     "build:injected-script": "vite build --config ./src/modules/injected-script/vite.config.ts --emptyOutDir",
     "build:content-script": "vite build --config ./src/modules/content-script/vite.config.ts --emptyOutDir",
     "build:service-worker": "vite build --config ./src/modules/service-worker/vite.config.ts --emptyOutDir",
