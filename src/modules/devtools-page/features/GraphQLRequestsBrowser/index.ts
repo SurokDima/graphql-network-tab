@@ -1,1 +1,0 @@
-export { GraphQLRequestsBrowser } from "./GraphQLRequestsBrowser";

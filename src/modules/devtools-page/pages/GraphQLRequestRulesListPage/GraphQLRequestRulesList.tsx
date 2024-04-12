@@ -10,6 +10,7 @@ type GraphQLRequestRulesListProps = {
   selectedRuleId: string | null;
   loading: boolean;
   error: Error | null;
+  disabled?: boolean;
   onSelectRule: (ruleId: string) => void;
 };
 
@@ -18,6 +19,7 @@ export const GraphQLRequestRulesList: FC<GraphQLRequestRulesListProps> = ({
   loading,
   error,
   selectedRuleId,
+  disabled = false,
   onSelectRule,
 }) => {
   return (
@@ -25,7 +27,7 @@ export const GraphQLRequestRulesList: FC<GraphQLRequestRulesListProps> = ({
       <Table
         size="sm"
         stickyHeader
-        hoverRow={!loading && !error}
+        hoverRow={!loading && !error && !disabled}
         sx={{
           "--TableCell-selectedBackground": (theme) => theme.vars.palette.primary.softBg,
           "& th": {
@@ -88,14 +90,24 @@ export const GraphQLRequestRulesList: FC<GraphQLRequestRulesListProps> = ({
               <TableRow
                 selected={rule.id === selectedRuleId}
                 key={rule.id}
-                onClick={() => onSelectRule(rule.id)}
+                onClick={() => !disabled && onSelectRule(rule.id)}
               >
                 <td>
-                  <Stack direction="row" alignItems="center" spacing={2}>
-                    <Typography level="title-sm">{rule.operationName}</Typography>
-                  </Stack>
+                  <Typography
+                    level="title-sm"
+                    textColor={disabled ? "neutral.plainDisabledColor" : "neutral.plainColor"}
+                  >
+                    {rule.operationName}
+                  </Typography>
                 </td>
-                <td>{rule.endpoint}</td>
+                <td>
+                  <Typography
+                    level="title-sm"
+                    textColor={disabled ? "neutral.plainDisabledColor" : "neutral.plainColor"}
+                  >
+                    {rule.endpoint}
+                  </Typography>
+                </td>
               </TableRow>
             ))
           )}
