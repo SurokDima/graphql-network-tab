@@ -1,26 +1,12 @@
 import { CssBaseline } from "@mui/joy";
 import { RouterProvider, createMemoryRouter } from "react-router-dom";
 
-import { GraphQLRequestRulesBrowser } from "./features/GraphQLRequestRulesBrowser";
-import { GraphQLRequestsBrowser } from "./features/GraphQLRequestsBrowser";
-import { MainLayout } from "./layouts/MainLayout";
+import { routes } from "./routes";
 
-const router = createMemoryRouter(
-  [
-    {
-      element: <MainLayout />,
-      children: [
-        { path: "/", element: <GraphQLRequestsBrowser /> },
-        { path: "/rules", element: <GraphQLRequestRulesBrowser /> },
-        { path: "/rules/:ruleId", element: <div>Rule</div> },
-      ],
-    },
-  ],
-  {
-    initialEntries: ["/"],
-    initialIndex: 0,
-  }
-);
+const router = createMemoryRouter(routes, {
+  initialEntries: ["/"],
+  initialIndex: 0,
+});
 
 // TODO Fix list horizontal overflow
 // TODO Change Table header height

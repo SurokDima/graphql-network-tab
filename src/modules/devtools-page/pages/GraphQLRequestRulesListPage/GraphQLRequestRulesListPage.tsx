@@ -1,26 +1,63 @@
 import { FC, useState } from "react";
 
 import { Add } from "@mui/icons-material";
-import { Box, Button, Stack } from "@mui/joy";
+import { Box, Button, Input, Stack, Switch } from "@mui/joy";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
+import { GraphQLRequestRuleCreationModal } from "../../features/GraphQLRequestRuleCreationModal/GraphQLRequestRuleCreationModal";
 import { useGraphQLRules } from "../../hooks/useGraphQLRequestRules";
-import { GraphQLRequestRuleCreationModal } from "../GraphQLRequestRuleCreationModal/GraphQLRequestRuleCreationModal";
 
 import { GraphQLRequestRulePanel } from "./GraphQLRequestRulePanel/GraphQLRequestRulePanel";
 import { GraphQLRequestRulesList } from "./GraphQLRequestRulesList";
 
-export const GraphQLRequestRulesBrowser: FC = () => {
+export const GraphQLRequestRulesListPage: FC = () => {
   const { graphQLRules, loading, error } = useGraphQLRules();
+  const [checked, setChecked] = useState(true);
 
   const [selectedRuleId, setSelectedRuleId] = useState<string | null>(null);
   const selectedRule = graphQLRules.find((rule) => rule.id === selectedRuleId);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [startsWith, setStartsWith] = useState("");
 
   return (
     <>
       <Stack direction="column" sx={{ position: "relative", height: "100%" }}>
+        <Stack
+          sx={{
+            gap: (theme) => theme.spacing(1),
+            padding: "0.25rem",
+            flexDirection: "row",
+            backgroundColor: (theme) => theme.palette.background.surface,
+            borderBottom: (theme) => `2px solid ${theme.palette.divider}`,
+          }}
+        >
+          <Input
+            value={startsWith}
+            onChange={(e) => {
+              setStartsWith(e.target.value);
+            }}
+            sx={{ width: "250px" }}
+            placeholder="Filter..."
+            size="sm"
+          />
+          <Switch
+            checked={checked}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setChecked(event.target.checked)
+            }
+            color={checked ? "success" : "neutral"}
+            variant={checked ? "solid" : "outlined"}
+            endDecorator={checked ? "On" : "Off"}
+            slotProps={{
+              endDecorator: {
+                sx: {
+                  minWidth: 24,
+                },
+              },
+            }}
+          />
+        </Stack>
         <PanelGroup direction="horizontal">
           <Panel>
             <Stack
@@ -33,6 +70,7 @@ export const GraphQLRequestRulesBrowser: FC = () => {
                 rules={graphQLRules}
                 error={error}
                 loading={loading}
+                disabled={!checked}
                 selectedRuleId={selectedRuleId}
                 onSelectRule={setSelectedRuleId}
               />
@@ -42,7 +80,11 @@ export const GraphQLRequestRulesBrowser: FC = () => {
                   borderTop: (theme) => `2px solid ${theme.palette.divider}`,
                 }}
               >
-                <Button startDecorator={<Add />} onClick={() => setIsModalOpen(true)}>
+                <Button
+                  startDecorator={<Add />}
+                  disabled={!checked}
+                  onClick={() => setIsModalOpen(true)}
+                >
                   Create new rule
                 </Button>
               </Box>

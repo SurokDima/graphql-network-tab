@@ -8,7 +8,7 @@ import { useGraphQLRequests } from "../../hooks/useGraphQLRequests";
 import { GraphQLRequestPanel } from "./GraphQLRequestPanel";
 import { GraphQLRequestsListPanel } from "./GraphQLRequestsListPanel";
 
-export const GraphQLRequestsBrowser: FC = () => {
+export const GraphQLRequestsListPage: FC = () => {
   const { graphQLRequests, clearRequests } = useGraphQLRequests();
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
 
