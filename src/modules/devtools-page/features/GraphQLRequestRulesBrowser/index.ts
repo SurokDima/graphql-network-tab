@@ -1,1 +1,0 @@
-export { GraphQLRequestRulesBrowser } from "./GraphQLRequestRulesBrowser";

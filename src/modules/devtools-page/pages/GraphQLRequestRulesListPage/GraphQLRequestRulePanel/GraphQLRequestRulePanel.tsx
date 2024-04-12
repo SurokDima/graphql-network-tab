@@ -17,6 +17,7 @@ import {
 } from "@mui/joy";
 
 import { GraphQLRequestRule } from "../../../../common/types/graphQL-request-rule";
+import { CopyButton } from "../../../ui/CopyButton";
 import { Description } from "../../../ui/Description";
 
 import { GraphQLRequestRuleScenariosList } from "./GraphQLRequestRuleScenariosList";
@@ -65,22 +66,26 @@ export const GraphQLRequestRulePanel: FC<GraphQLRequestRulePanelProps> = ({
             <Accordion defaultExpanded>
               <AccordionSummary>General</AccordionSummary>
               <AccordionDetails variant="soft">
-                <Description
-                  rows={[
-                    {
-                      label: "Operation name",
-                      value: graphQlRequestRule.operationName,
-                    },
-                    {
-                      label: "Endpoint",
-                      value: (
-                        <Link href={graphQlRequestRule.endpoint} target="_blank">
-                          {graphQlRequestRule.endpoint}
-                        </Link>
-                      ),
-                    },
-                  ]}
-                />
+                <Description.Root>
+                  <Description.Row>
+                    <Description.RowLabel>Operation name</Description.RowLabel>
+                    <Description.RowValue>{graphQlRequestRule.operationName}</Description.RowValue>
+                    <Description.RowActions>
+                      <CopyButton value={graphQlRequestRule.operationName} />
+                    </Description.RowActions>
+                  </Description.Row>
+                  <Description.Row>
+                    <Description.RowLabel>Endpoint</Description.RowLabel>
+                    <Description.RowValue>
+                      <Link href={graphQlRequestRule.endpoint} target="_blank">
+                        {graphQlRequestRule.endpoint}
+                      </Link>
+                    </Description.RowValue>
+                    <Description.RowActions>
+                      <CopyButton value={graphQlRequestRule.endpoint} />
+                    </Description.RowActions>
+                  </Description.Row>
+                </Description.Root>
               </AccordionDetails>
             </Accordion>
           </AccordionGroup>

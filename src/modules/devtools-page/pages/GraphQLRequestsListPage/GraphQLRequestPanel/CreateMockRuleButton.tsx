@@ -4,7 +4,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { IconButton } from "@mui/joy";
 
 import { GraphQLRequest } from "../../../../common/types/graphQL-request";
-import { GraphQLRequestRuleCreationModal } from "../../GraphQLRequestRuleCreationModal/GraphQLRequestRuleCreationModal";
+import { GraphQLRequestRuleCreationModal } from "../../../features/GraphQLRequestRuleCreationModal/GraphQLRequestRuleCreationModal";
 
 export type CreateMockRuleButtonProps = {
   selectedRequest: GraphQLRequest | null;

@@ -18,6 +18,7 @@ import {
 
 import { Scenario } from "../../../../common/types/graphQL-request-rule";
 import { NetworkRequestStatus } from "../../../components/NetworkRequestStatus";
+import { CopyButton } from "../../../ui/CopyButton";
 import { Description } from "../../../ui/Description";
 
 export type GraphQLRequestRuleScenariosTableProps = {
@@ -161,21 +162,31 @@ const Row: FC<RowProps> = ({ scenario, isActive, onChange, defaultOpen = false }
               </TabList>
               <TabPanel value={0} sx={{ background: (theme) => theme.palette.background.level1 }}>
                 <Typography level="title-md">Headers</Typography>
-                <Description
-                  rows={mockHeaders.map((header) => ({
-                    label: header.name,
-                    value: header.value,
-                  }))}
-                />
+                <Description.Root>
+                  {mockHeaders.map((header) => (
+                    <Description.Row key={header.name}>
+                      <Description.RowLabel>{header.name}</Description.RowLabel>
+                      <Description.RowValue>{header.value}</Description.RowValue>
+                      <Description.RowActions>
+                        <CopyButton value={header.value} />
+                      </Description.RowActions>
+                    </Description.Row>
+                  ))}
+                </Description.Root>
               </TabPanel>
               <TabPanel value={1} sx={{ background: (theme) => theme.palette.background.level1 }}>
                 <Typography level="title-md">Headers</Typography>
-                <Description
-                  rows={mockHeaders.map((header) => ({
-                    label: header.name,
-                    value: header.value,
-                  }))}
-                />
+                <Description.Root>
+                  {mockHeaders.map((header) => (
+                    <Description.Row key={header.name}>
+                      <Description.RowLabel>{header.name}</Description.RowLabel>
+                      <Description.RowValue>{header.value}</Description.RowValue>
+                      <Description.RowActions>
+                        <CopyButton value={header.value} />
+                      </Description.RowActions>
+                    </Description.Row>
+                  ))}
+                </Description.Root>
               </TabPanel>
               <TabPanel value={2} sx={{ background: (theme) => theme.palette.background.level1 }}>
                 <Link level="body-sm">See body</Link>

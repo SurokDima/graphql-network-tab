@@ -4,8 +4,7 @@ import NotInterestedIcon from "@mui/icons-material/NotInterested";
 import { Stack, Box, IconButton, Input } from "@mui/joy";
 
 import { GraphQLOperationType, GraphQLRequest } from "../../../../common/types/graphQL-request";
-import { useSet } from "../../../hooks/useSet";
-import { TagsList } from "../../../ui/TagsList";
+import { Tag, TagsSelector } from "../../../ui/TagsSelector";
 import { isDefined } from "../../../utils/boolean.utils";
 import { pipe } from "../../../utils/function.utils";
 
@@ -26,8 +25,10 @@ export const GraphQLRequestsListPanel: FC<GraphQLRequestsListPanelProps> = ({
   onSelectRequest,
   onClearRequests,
 }) => {
-  const [operationTypes, { has: isOperationTypeEnabled, toggle: toggleOperationType }] =
-    useSet<GraphQLOperationType>(["query", "mutation"]);
+  const [operationTypes, setOperationTypes] = useState<GraphQLOperationType[]>([
+    "mutation",
+    "query",
+  ]);
 
   const [startsWith, setStartsWith] = useState("");
 
@@ -86,23 +87,17 @@ export const GraphQLRequestsListPanel: FC<GraphQLRequestsListPanelProps> = ({
             borderTop: (theme) => `2px solid ${theme.palette.divider}`,
           }}
         >
-          <TagsList
-            tags={[
-              {
-                label: "Query",
-                value: "query",
-                color: "success",
-                isSelected: isOperationTypeEnabled("query"),
-              },
-              {
-                label: "Mutation",
-                value: "mutation",
-                color: "danger",
-                isSelected: isOperationTypeEnabled("mutation"),
-              },
-            ]}
-            onTagChange={(tag) => toggleOperationType(tag as GraphQLOperationType)}
-          />
+          <TagsSelector
+            onChange={(tags) => setOperationTypes(tags as GraphQLOperationType[])}
+            selectedTags={operationTypes}
+          >
+            <Tag color="success" value="query">
+              Query
+            </Tag>
+            <Tag color="danger" value="mutation">
+              Mutation
+            </Tag>
+          </TagsSelector>
         </Box>
       </Stack>
     </Stack>

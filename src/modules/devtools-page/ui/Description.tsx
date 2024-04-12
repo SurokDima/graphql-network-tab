@@ -1,20 +1,36 @@
-import { FC, ReactNode, useState } from "react";
+import { FC, PropsWithChildren } from "react";
 
-import { Snackbar, Table, styled } from "@mui/joy";
+import { Stack, Table, styled } from "@mui/joy";
 
-import { CopyButton } from "./CopyButton";
+export type DescriptionRootProps = PropsWithChildren;
+export type DescriptionRowProps = PropsWithChildren;
+export type DescriptionRowLabelProps = PropsWithChildren;
+export type DescriptionRowValueProps = PropsWithChildren;
+export type DescriptionRowActionsProps = PropsWithChildren;
 
-export type DescriptionProps = {
-  rows: {
-    label: ReactNode;
-    value: ReactNode;
-    copyValue?: string;
-  }[];
+const DescriptionRowLabel: FC<DescriptionRowLabelProps> = ({ children }) => {
+  return <td>{children}</td>;
 };
 
-export const Description: FC<DescriptionProps> = ({ rows }) => {
-  const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
+const DescriptionRowValue: FC<DescriptionRowValueProps> = ({ children }) => {
+  return <td>{children}</td>;
+};
 
+const DescriptionRowActions: FC<DescriptionRowActionsProps> = ({ children }) => {
+  return (
+    <td>
+      <Stack direction="row" spacing={1}>
+        {children}
+      </Stack>
+    </td>
+  );
+};
+
+const DescriptionRow: FC<DescriptionRowProps> = ({ children }) => {
+  return <TableRow>{children}</TableRow>;
+};
+
+const DescriptionRoot: FC<DescriptionRootProps> = ({ children }) => {
   return (
     <>
       <Table
@@ -23,31 +39,8 @@ export const Description: FC<DescriptionProps> = ({ rows }) => {
           "--TableCell-height": "50px",
         }}
       >
-        <tbody>
-          {rows.map((row, index) => (
-            <TableRow key={index}>
-              <td>{row.label}</td>
-              <td>{row.value}</td>
-              <td>
-                {row.copyValue && (
-                  <div>
-                    <CopyButton value={row.copyValue} />
-                  </div>
-                )}
-              </td>
-            </TableRow>
-          ))}
-        </tbody>
+        <tbody>{children}</tbody>
       </Table>
-      <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        open={isSnackbarOpen}
-        onClose={() => setIsSnackbarOpen(false)}
-        variant="solid"
-        color={"success"}
-      >
-        Copied
-      </Snackbar>
     </>
   );
 };
@@ -79,3 +72,11 @@ const TableRow = styled("tr")`
     }
   }
 `;
+
+export const Description = {
+  Root: DescriptionRoot,
+  Row: DescriptionRow,
+  RowLabel: DescriptionRowLabel,
+  RowValue: DescriptionRowValue,
+  RowActions: DescriptionRowActions,
+};
