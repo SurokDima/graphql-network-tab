@@ -8,9 +8,10 @@ import { useCopy } from "../hooks/useCopy";
 
 type CopyButtonProps = {
   value: string;
+  disabled?: boolean;
 };
 
-export const CopyButton: FC<CopyButtonProps> = ({ value }) => {
+export const CopyButton: FC<CopyButtonProps> = ({ value, disabled = false }) => {
   const { copy } = useCopy({
     onSuccess: () => toast.success("Copied"),
   });
@@ -21,6 +22,7 @@ export const CopyButton: FC<CopyButtonProps> = ({ value }) => {
       onClick={() => {
         copy(value);
       }}
+      disabled={disabled}
       variant="plain"
       color="success"
     >

@@ -5,6 +5,7 @@ import { Button } from "@mui/joy";
 import { GraphQLRequestTarget, Scenario } from "../../../../common/types/graphQL-request-rule";
 import { useGraphQLRules } from "../../../hooks/useGraphQLRequestRules";
 import { setActiveScenario } from "../../../services/graphQL-request-rules";
+import { getCurrentTab } from "../../../services/tabs";
 
 import { GraphQLRequestRuleScenariosTable } from "./GraphQLRequestRuleScenariosTable";
 
@@ -12,12 +13,14 @@ type GraphQLRequestRuleScenariosListProps = {
   graphQLRequestTarget: GraphQLRequestTarget;
   scenarios: Scenario[];
   activeScenarioId: string | null;
+  disabled?: boolean;
 };
 
 export const GraphQLRequestRuleScenariosList: FC<GraphQLRequestRuleScenariosListProps> = ({
   scenarios,
   activeScenarioId,
   graphQLRequestTarget,
+  disabled = false,
 }) => {
   const { refresh: refreshGraphQLRules, loading: graphQLRequestRulesLoading } = useGraphQLRules();
   const { setActiveScenario, loading } = useSetActiveScenario();
@@ -31,7 +34,9 @@ export const GraphQLRequestRuleScenariosList: FC<GraphQLRequestRuleScenariosList
 
   const handleSave = async () => {
     if (!changedActiveScenarioId) return;
-    await setActiveScenario(changedActiveScenarioId, graphQLRequestTarget);
+    const currentTab = await getCurrentTab();
+    if (!currentTab?.url) return;
+    await setActiveScenario(changedActiveScenarioId, graphQLRequestTarget, currentTab.url);
     await refreshGraphQLRules();
     setTouched(false);
   };
@@ -41,11 +46,13 @@ export const GraphQLRequestRuleScenariosList: FC<GraphQLRequestRuleScenariosList
       <GraphQLRequestRuleScenariosTable
         activeScenarioId={touched ? changedActiveScenarioId : activeScenarioId}
         scenarios={scenarios}
+        disabled={disabled}
         renderToolbarAction={() => (
           <Button
             variant="solid"
             color="primary"
             size="sm"
+            disabled={disabled}
             sx={{ visibility: !touched ? "hidden" : "visible" }}
             loading={loading || graphQLRequestRulesLoading}
             onClick={handleSave}
@@ -70,14 +77,15 @@ const useSetActiveScenario = () => {
 
   const setActiveScenarioItem = async (
     scenarioId: string,
-    graphQLRequestTarget: GraphQLRequestTarget
+    graphQLRequestTarget: GraphQLRequestTarget,
+    url: string
   ) => {
     setLoading(true);
     setError(null);
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      await setActiveScenario(scenarioId, graphQLRequestTarget);
+      await setActiveScenario(scenarioId, graphQLRequestTarget, url);
     } catch (error) {
       setError(error as Error);
     } finally {

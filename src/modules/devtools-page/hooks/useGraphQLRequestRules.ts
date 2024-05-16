@@ -2,7 +2,9 @@ import { useCallback, useEffect } from "react";
 
 import { useAtom } from "jotai";
 
-import { GraphQLRequestRule } from "../../common/types/graphQL-request-rule";
+import { WebsiteConfig } from "../../common/types/website-config";
+import { getDomain } from "../../common/utils/string.utils";
+import { getCurrentTab } from "../services/tabs";
 import { storage } from "../storage";
 import { graphQLRulesStateAtom } from "../store";
 
@@ -14,8 +16,19 @@ export const useGraphQLRules = () => {
     setGraphQLRulesState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
-      const data = await storage.getItem<GraphQLRequestRule[] | null | undefined>("requestRules");
-      setGraphQLRulesState((prev) => ({ ...prev, data: data ?? [] }));
+      const websiteConfigs = await storage.getItem<WebsiteConfig[] | null | undefined>(
+        "requestRules"
+      );
+
+      const currentTab = await getCurrentTab();
+      if (!currentTab?.url) return;
+
+      const domainResult = getDomain(currentTab.url);
+      if (!domainResult.ok) return;
+      const domain = domainResult.value;
+
+      const websiteConfig = websiteConfigs?.find((config) => config.domain === domain);
+      setGraphQLRulesState((prev) => ({ ...prev, data: websiteConfig?.rules ?? [] }));
     } catch (error) {
       setGraphQLRulesState((prev) => ({ ...prev, error: error as Error }));
     } finally {
