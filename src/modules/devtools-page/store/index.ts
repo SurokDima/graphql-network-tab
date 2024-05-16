@@ -14,3 +14,5 @@ export const graphQLRulesStateAtom = atom<{
   loading: true,
   error: null,
 });
+
+export const toolbarAtom = atom<{ id: string; renderer: () => JSX.Element }[]>([]);

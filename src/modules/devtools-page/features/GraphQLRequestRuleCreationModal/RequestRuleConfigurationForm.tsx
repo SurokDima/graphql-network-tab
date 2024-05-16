@@ -16,9 +16,9 @@ import {
 } from "@mui/joy";
 import { Controller, useForm } from "react-hook-form";
 
+import { unique } from "../../../common/utils/array.utils";
 import { GraphQLRequestIcon } from "../../components/GraphQLRequestIcon";
 import { useGraphQLRequests } from "../../hooks/useGraphQLRequests";
-import { unique } from "../../utils/array.utils";
 
 export type RequestRuleConfigurationFormProps = {
   onSubmit: (data: RequestRuleConfigurationFormData) => void;

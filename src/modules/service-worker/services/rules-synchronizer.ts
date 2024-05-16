@@ -1,8 +1,10 @@
-import { GraphQLRequestRule } from "../../common/types/graphQL-request-rule";
+import { WebsiteConfig } from "../../common/types/website-config";
+import { getDomain } from "../../common/utils/string.utils";
 import { storage } from "../storage";
 
 import { ScriptCodeType, ScriptType, injectScript } from "./scripting";
 
+// TODO optimize
 export const initializeGraphQLRulesSynchronizer = async (): Promise<void> => {
   console.info(
     "[GraphQL Network Tab][Service Worker]: Initializing graphQL rules synchronizer.",
@@ -16,36 +18,51 @@ export const initializeGraphQLRulesSynchronizer = async (): Promise<void> => {
     );
 
     const tabs = await chrome.tabs.query({});
-    const rules = (await storage.getItem<GraphQLRequestRule[]>("requestRules")) ?? [];
 
-    console.info("[GraphQL Network Tab][Service Worker]: Retrieved rules from storage", rules);
+    const websiteConfigs = (await storage.getItem<WebsiteConfig[]>("requestRules")) ?? [];
 
-    tabs
-      .filter(
-        (tab) =>
-          !!tab.url &&
-          rules.some((rule) =>
-            rule.scenarios.some((scenario) => scenario.tabTarget.url === tab.url)
-          )
-      )
-      .forEach((tab) => {
-        if (!tab.id) return;
+    console.info(
+      "[GraphQL Network Tab][Service Worker]: Retrieved website configs from storage",
+      websiteConfigs
+    );
 
-        console.info(
-          `[GraphQL Network Tab][Service Worker]: Sending request rules to the tab`,
-          tab
-        );
+    tabs.forEach((tab) => {
+      if (!tab.id || !tab.url) return;
+
+      const domainResult = getDomain(tab.url);
+      if (!domainResult.ok) return;
+      const domain = domainResult.value;
+
+      const websiteConfig = websiteConfigs.find((config) => config.domain === domain);
+      if (!websiteConfig) return;
+
+      if (!websiteConfig.enabled) {
+        console.info(`[GraphQL Network Tab][Service Worker]: Disabling feature for the tab`, tab);
 
         injectScript(
           {
             codeType: ScriptCodeType.JS,
             type: ScriptType.CODE,
-            value: `window.GRAPHQL_NETWORK_TAB = {
-          requestRules: ${JSON.stringify(rules)}
-        }`,
+            value: `window.restoreFetch?.()`,
           },
           { tabId: tab.id }
         );
-      });
+
+        return;
+      }
+
+      if (websiteConfig.rules.length === 0) return;
+
+      injectScript(
+        {
+          codeType: ScriptCodeType.JS,
+          type: ScriptType.CODE,
+          value: `window.attachFetch?.(); window.GRAPHQL_NETWORK_TAB = {
+            requestRules: ${JSON.stringify(websiteConfig.rules)}
+          };`,
+        },
+        { tabId: tab.id }
+      );
+    });
   });
 };

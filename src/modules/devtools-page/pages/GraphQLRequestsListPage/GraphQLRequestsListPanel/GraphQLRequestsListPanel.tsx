@@ -4,9 +4,9 @@ import NotInterestedIcon from "@mui/icons-material/NotInterested";
 import { Stack, Box, IconButton, Input } from "@mui/joy";
 
 import { GraphQLOperationType, GraphQLRequest } from "../../../../common/types/graphQL-request";
+import { isDefined } from "../../../../common/utils/boolean.utils";
+import { pipe } from "../../../../common/utils/function.utils";
 import { Tag, TagsSelector } from "../../../ui/TagsSelector";
-import { isDefined } from "../../../utils/boolean.utils";
-import { pipe } from "../../../utils/function.utils";
 
 import { GraphQLRequestsList } from "./GraphQLRequestsList";
 

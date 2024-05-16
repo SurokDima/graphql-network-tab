@@ -9,11 +9,6 @@ export type GraphQLRequestRule = {
   activeScenarioId: string;
 } & GraphQLRequestTarget;
 
-export type TabTarget = {
-  tabId: number;
-  url: string;
-};
-
 export type Scenario = {
   id: string;
   name: string;
@@ -22,7 +17,6 @@ export type Scenario = {
     headers: Record<string, string>;
     body: string;
   };
-  tabTarget: TabTarget;
 };
 
 export const areTargetsEqual = (a: GraphQLRequestTarget, b: GraphQLRequestTarget) =>

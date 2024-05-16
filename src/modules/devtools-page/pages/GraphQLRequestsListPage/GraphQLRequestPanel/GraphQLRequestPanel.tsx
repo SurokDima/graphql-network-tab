@@ -29,7 +29,7 @@ export type GraphQLRequestPanelProps = {
 
 export const GraphQLRequestPanel: FC<GraphQLRequestPanelProps> = ({ graphQLRequest, onClose }) => {
   return (
-    <Stack direction="column" height="100%">
+    <Stack height="100%">
       <Box
         sx={{
           backgroundColor: (theme) => theme.palette.background.surface,

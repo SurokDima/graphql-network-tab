@@ -102,16 +102,16 @@ export const GraphQLRequestRuleCreationModal: FC<GraphQLRequestRuleCreationModal
         headers: {},
         body: responseRule.body,
       },
-      tabTarget: {
-        url: currentTab.url,
-        tabId: currentTab.id,
-      },
     };
 
-    await saveScenario(scenario, {
-      operationName: requestRule.operationName,
-      endpoint: requestRule.graphQLEndpoint,
-    });
+    await saveScenario(
+      scenario,
+      {
+        operationName: requestRule.operationName,
+        endpoint: requestRule.graphQLEndpoint,
+      },
+      currentTab.url
+    );
 
     await refreshGraphQLRules();
 
