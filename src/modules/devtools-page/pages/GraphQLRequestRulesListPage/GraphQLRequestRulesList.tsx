@@ -3,6 +3,7 @@ import { FC } from "react";
 import { Alert, Skeleton, Stack, Table, Typography, styled } from "@mui/joy";
 
 import { GraphQLRequestRule } from "../../../common/types/graphQL-request-rule";
+import { GraphQLRequestRuleIcon } from "../../components/GraphQLRequestRuleIcon";
 import { InlineAlert } from "../../ui/InlineAlert";
 
 type GraphQLRequestRulesListProps = {
@@ -37,8 +38,20 @@ export const GraphQLRequestRulesList: FC<GraphQLRequestRulesListProps> = ({
       >
         <thead>
           <tr>
-            <th>Operation name</th>
-            <th>Endpoint</th>
+            <th>
+              <Typography
+                textColor={disabled ? "neutral.plainDisabledColor" : "neutral.plainColor"}
+              >
+                Operation name
+              </Typography>
+            </th>
+            <th>
+              <Typography
+                textColor={disabled ? "neutral.plainDisabledColor" : "neutral.plainColor"}
+              >
+                Endpoint
+              </Typography>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -93,12 +106,18 @@ export const GraphQLRequestRulesList: FC<GraphQLRequestRulesListProps> = ({
                 onClick={() => !disabled && onSelectRule(rule.id)}
               >
                 <td>
-                  <Typography
-                    level="title-sm"
-                    textColor={disabled ? "neutral.plainDisabledColor" : "neutral.plainColor"}
-                  >
-                    {rule.operationName}
-                  </Typography>
+                  <Stack direction="row" alignItems="center" spacing={2}>
+                    <GraphQLRequestRuleIcon
+                      disabled={disabled}
+                      operationName={rule.operationName}
+                    />
+                    <Typography
+                      level="title-sm"
+                      textColor={disabled ? "neutral.plainDisabledColor" : "neutral.plainColor"}
+                    >
+                      {rule.operationName}
+                    </Typography>
+                  </Stack>
                 </td>
                 <td>
                   <Typography

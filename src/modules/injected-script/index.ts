@@ -1,13 +1,11 @@
 import { GraphQLRequestRule } from "../common/types/graphQL-request-rule";
 
-/* eslint-disable no-global-assign */
 console.info("[GraphQL Network Tab][Network Mocking Script]: Injected into the page.");
 
-const originalFetch = fetch;
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-fetch = async function (input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+const customFetch = async function (
+  input: RequestInfo | URL,
+  init?: RequestInit
+): Promise<Response> {
   console.info(
     "[GraphQL Network Tab][Network Mocking Script]: Intercepted fetch request",
     input,
@@ -81,6 +79,26 @@ fetch = async function (input: RequestInfo | URL, init?: RequestInit): Promise<R
   });
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-window.asdf = "sdf";
+let originalFetch = window.fetch;
+
+const attachFetch = () => {
+  if (window.fetch === customFetch) {
+    console.info("[GraphQL Network Tab][Network Mocking Script]: Fetch is already attached.");
+    return;
+  }
+
+  console.info("[GraphQL Network Tab][Network Mocking Script]: Attaching fetch.");
+  originalFetch = window.fetch;
+  window.fetch = customFetch;
+};
+
+// @ts-expect-error - We know that the global variable exists
+window.attachFetch = attachFetch;
+
+// @ts-expect-error - We know that the global variable exists
+window.restoreFetch = () => {
+  console.info("[GraphQL Network Tab][Network Mocking Script]: Restoring original fetch.");
+  window.fetch = originalFetch;
+};
+
+attachFetch();

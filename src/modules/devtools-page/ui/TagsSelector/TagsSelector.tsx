@@ -2,7 +2,7 @@ import { FC, useCallback, useMemo, useState } from "react";
 
 import { List } from "@mui/joy";
 
-import { toggleItem } from "../../utils/array.utils";
+import { toggleItem } from "../../../common/utils/array.utils";
 
 import { TagsSelectorContext } from "./TagsSelectorContext";
 

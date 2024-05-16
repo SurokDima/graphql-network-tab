@@ -4,12 +4,21 @@ import { Badge, Typography } from "@mui/joy";
 
 export type NetworkRequestStatusProps = {
   statusCode: number;
+  disabled?: boolean;
 };
 
-export const NetworkRequestStatus: FC<NetworkRequestStatusProps> = ({ statusCode }) => {
+export const NetworkRequestStatus: FC<NetworkRequestStatusProps> = ({
+  statusCode,
+  disabled = false,
+}) => {
   return (
     <Badge size="sm" color={mapStatusCodeToColor(statusCode)}>
-      <Typography level="body-sm">{statusCode}</Typography>
+      <Typography
+        level="body-sm"
+        textColor={disabled ? "neutral.plainDisabledColor" : "neutral.plainColor"}
+      >
+        {statusCode}
+      </Typography>
     </Badge>
   );
 };

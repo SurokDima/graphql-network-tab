@@ -27,11 +27,13 @@ export type GraphQLRequestRuleScenariosTableProps = {
   onActiveScenarioChange?: (scenarioId: string) => void;
   onDeleteScenario?: (scenarioId: string) => void;
   renderToolbarAction?: () => React.ReactNode;
+  disabled?: boolean;
 };
 
 export const GraphQLRequestRuleScenariosTable: FC<GraphQLRequestRuleScenariosTableProps> = ({
   scenarios,
   activeScenarioId,
+  disabled = false,
   onActiveScenarioChange,
   renderToolbarAction,
 }) => {
@@ -56,7 +58,7 @@ export const GraphQLRequestRuleScenariosTable: FC<GraphQLRequestRuleScenariosTab
       >
         <Typography
           level="title-sm"
-          textColor="neutral.plainColor"
+          textColor={disabled ? "neutral.plainDisabledColor" : "neutral.plainColor"}
           sx={{ flex: "1 1 100%" }}
           id="tableTitle"
           component="div"
@@ -78,8 +80,20 @@ export const GraphQLRequestRuleScenariosTable: FC<GraphQLRequestRuleScenariosTab
         <thead>
           <tr>
             <th style={{ width: 40 }} aria-label="empty" />
-            <th style={{ width: "40%" }}>Name</th>
-            <th>Status</th>
+            <th style={{ width: "40%" }}>
+              <Typography
+                textColor={disabled ? "neutral.plainDisabledColor" : "neutral.plainColor"}
+              >
+                Name
+              </Typography>
+            </th>
+            <th>
+              <Typography
+                textColor={disabled ? "neutral.plainDisabledColor" : "neutral.plainColor"}
+              >
+                Status
+              </Typography>
+            </th>
             <th></th>
           </tr>
         </thead>
@@ -87,6 +101,7 @@ export const GraphQLRequestRuleScenariosTable: FC<GraphQLRequestRuleScenariosTab
           {scenarios.map((scenario) => (
             <Row
               key={scenario.id}
+              disabled={disabled}
               scenario={scenario}
               isActive={scenario.id === activeScenarioId}
               onChange={() => onActiveScenarioChange?.(scenario.id)}
@@ -103,9 +118,16 @@ type RowProps = {
   isActive: boolean;
   onChange?: () => void;
   defaultOpen?: boolean;
+  disabled?: boolean;
 };
 
-const Row: FC<RowProps> = ({ scenario, isActive, onChange, defaultOpen = false }) => {
+const Row: FC<RowProps> = ({
+  scenario,
+  isActive,
+  onChange,
+  defaultOpen = false,
+  disabled = false,
+}) => {
   const [open, setOpen] = useState(defaultOpen);
 
   return (
@@ -117,21 +139,38 @@ const Row: FC<RowProps> = ({ scenario, isActive, onChange, defaultOpen = false }
             variant="plain"
             color="neutral"
             size="sm"
+            disabled={disabled}
             onClick={() => setOpen(!open)}
           >
             {open ? <KeyboardArrowDown /> : <KeyboardArrowDown />}
           </IconButton>
         </td>
 
-        <th scope="row">{scenario.name}</th>
+        <th scope="row">
+          <Typography
+            level="body-xs"
+            textColor={disabled ? "neutral.plainDisabledColor" : "neutral.plainColor"}
+          >
+            {scenario.name}
+          </Typography>
+        </th>
         <td>
-          <NetworkRequestStatus statusCode={Number(scenario.response.statusCode)} />
+          <NetworkRequestStatus
+            disabled={disabled}
+            statusCode={Number(scenario.response.statusCode)}
+          />
         </td>
         <td>
-          <Chip variant="plain" size="sm" color={isActive ? "success" : "neutral"}>
+          <Chip
+            variant="plain"
+            size="sm"
+            color={isActive ? "success" : "neutral"}
+            disabled={disabled}
+          >
             <Checkbox
               size="sm"
               disableIcon
+              disabled={disabled}
               overlay
               color={isActive ? "success" : "neutral"}
               label={isActive ? "Active" : "Disabled"}
@@ -156,19 +195,36 @@ const Row: FC<RowProps> = ({ scenario, isActive, onChange, defaultOpen = false }
           {open && (
             <Tabs size="sm" sx={{ background: (theme) => theme.palette.background.level1 }}>
               <TabList>
-                <Tab>Request</Tab>
-                <Tab>Response</Tab>
-                <Tab>Body</Tab>
+                <Tab disabled={disabled}>Request</Tab>
+                <Tab disabled={disabled}>Response</Tab>
+                <Tab disabled={disabled}>Body</Tab>
               </TabList>
               <TabPanel value={0} sx={{ background: (theme) => theme.palette.background.level1 }}>
-                <Typography level="title-md">Headers</Typography>
+                <Typography
+                  level="title-md"
+                  textColor={disabled ? "neutral.plainDisabledColor" : "neutral.plainColor"}
+                >
+                  Headers
+                </Typography>
                 <Description.Root>
                   {mockHeaders.map((header) => (
                     <Description.Row key={header.name}>
-                      <Description.RowLabel>{header.name}</Description.RowLabel>
-                      <Description.RowValue>{header.value}</Description.RowValue>
+                      <Description.RowLabel>
+                        <Typography
+                          textColor={disabled ? "neutral.plainDisabledColor" : "neutral.plainColor"}
+                        >
+                          {header.name}
+                        </Typography>
+                      </Description.RowLabel>
+                      <Description.RowValue>
+                        <Typography
+                          textColor={disabled ? "neutral.plainDisabledColor" : "neutral.plainColor"}
+                        >
+                          {header.value}
+                        </Typography>
+                      </Description.RowValue>
                       <Description.RowActions>
-                        <CopyButton value={header.value} />
+                        <CopyButton disabled={disabled} value={header.value} />
                       </Description.RowActions>
                     </Description.Row>
                   ))}
@@ -179,10 +235,22 @@ const Row: FC<RowProps> = ({ scenario, isActive, onChange, defaultOpen = false }
                 <Description.Root>
                   {mockHeaders.map((header) => (
                     <Description.Row key={header.name}>
-                      <Description.RowLabel>{header.name}</Description.RowLabel>
-                      <Description.RowValue>{header.value}</Description.RowValue>
+                      <Description.RowLabel>
+                        <Typography
+                          textColor={disabled ? "neutral.plainDisabledColor" : "neutral.plainColor"}
+                        >
+                          {header.name}
+                        </Typography>
+                      </Description.RowLabel>
+                      <Description.RowValue>
+                        <Typography
+                          textColor={disabled ? "neutral.plainDisabledColor" : "neutral.plainColor"}
+                        >
+                          {header.value}
+                        </Typography>
+                      </Description.RowValue>
                       <Description.RowActions>
-                        <CopyButton value={header.value} />
+                        <CopyButton disabled={disabled} value={header.value} />
                       </Description.RowActions>
                     </Description.Row>
                   ))}
