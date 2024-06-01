@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { styled } from "@mui/joy";
+import { Box, styled } from "@mui/joy";
 import JsonViewer from "react18-json-view";
 import "react18-json-view/src/style.css";
 
@@ -9,7 +9,11 @@ type JsonViewProps = {
 };
 
 export const JsonView: FC<JsonViewProps> = ({ json }) => {
-  return <StyledJsnViewer src={json} collapsed={1} displaySize={true} />;
+  return (
+    <Box sx={{ padding: "0.75rem" }}>
+      <StyledJsnViewer src={json} collapsed={1} displaySize={true} />
+    </Box>
+  );
 };
 
 const StyledJsnViewer = styled(JsonViewer)`

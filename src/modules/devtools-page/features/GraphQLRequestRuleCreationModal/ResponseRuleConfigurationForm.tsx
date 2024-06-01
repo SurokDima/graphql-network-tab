@@ -1,16 +1,28 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { z } from "zod";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InfoOutlined } from "@mui/icons-material";
-import { Stack, FormControl, FormLabel, FormHelperText, Button, Textarea } from "@mui/joy";
+import {
+  Stack,
+  FormControl,
+  FormLabel,
+  FormHelperText,
+  Button,
+  Modal,
+  ModalDialog,
+  ModalClose,
+  Typography,
+} from "@mui/joy";
 import { Controller, useForm } from "react-hook-form";
 
 import { HttpStatusCodeInput } from "../../components/HttpStatusCodeInput";
+import { CodeEditorFormField } from "../../ui/FormField/CodeEditorField";
 
 export type ResponseRuleConfigurationFormProps = {
   onSubmit: (data: ResponseRuleConfigurationFormData) => void;
   onBack?: () => void;
+  lastResponseBody: string | null;
 };
 
 export type ResponseRuleConfigurationFormData = {
@@ -32,11 +44,15 @@ const validationSchema = z.object({
 export const ResponseRuleConfigurationForm: FC<ResponseRuleConfigurationFormProps> = ({
   onSubmit,
   onBack,
+  lastResponseBody,
 }) => {
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, dirtyFields },
+    setValue,
   } = useForm<ResponseRuleConfigurationFormData>({
     defaultValues: {
       statusCode: "",
@@ -45,53 +61,129 @@ export const ResponseRuleConfigurationForm: FC<ResponseRuleConfigurationFormProp
     resolver: zodResolver(validationSchema),
   });
 
+  const handleUseLastResponseBody = () => {
+    if (!lastResponseBody) return;
+
+    if (dirtyFields.body) {
+      setIsConfirmModalOpen(true);
+    } else {
+      setValue("body", lastResponseBody);
+    }
+  };
+
   return (
-    <Stack spacing={3}>
-      <Stack spacing={1}>
-        <FormControl error={!!errors.statusCode}>
-          <FormLabel>Status</FormLabel>
-          <Controller
-            name="statusCode"
-            control={control}
-            render={({ field: { onChange, ref: _, ...field } }) => (
-              <HttpStatusCodeInput onInputChange={onChange} {...field} />
+    <>
+      <Stack spacing={3}>
+        <Stack spacing={1}>
+          <FormControl error={!!errors.statusCode}>
+            <FormLabel>Status</FormLabel>
+            <Controller
+              name="statusCode"
+              control={control}
+              render={({ field: { onChange, ref: _, ...field } }) => (
+                <HttpStatusCodeInput onInputChange={onChange} {...field} />
+              )}
+            />
+            <FormHelperText>
+              {errors.statusCode ? (
+                <>
+                  <InfoOutlined />
+                  {errors.statusCode.message}
+                </>
+              ) : (
+                "Status code for the response"
+              )}
+            </FormHelperText>
+          </FormControl>
+          <Stack gap={1}>
+            <Controller
+              name="body"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <CodeEditorFormField
+                  height={200}
+                  label="Body"
+                  onChange={onChange}
+                  value={value}
+                  language="json"
+                />
+              )}
+            />
+            {lastResponseBody && (
+              <Stack direction="row" justifyContent="flex-end">
+                <Button variant="plain" color="neutral" onClick={() => handleUseLastResponseBody()}>
+                  Use last response body
+                </Button>
+              </Stack>
             )}
-          />
-          <FormHelperText>
-            {errors.statusCode ? (
-              <>
-                <InfoOutlined />
-                {errors.statusCode.message}
-              </>
-            ) : (
-              "Status code for the response"
-            )}
-          </FormHelperText>
-        </FormControl>
-        <FormControl>
-          <FormLabel>Body</FormLabel>
-          <Controller
-            name="body"
-            control={control}
-            render={({ field }) => (
-              <Textarea placeholder="Response body" minRows={10} maxRows={10} {...field} />
-            )}
-          />
-        </FormControl>
+          </Stack>
+        </Stack>
+        <Stack direction="row" spacing={1}>
+          <Button variant="outlined" color="neutral" sx={{ flex: "1 1 auto" }} onClick={onBack}>
+            Back
+          </Button>
+          <Button
+            variant="solid"
+            color="primary"
+            sx={{ flex: "1 1 auto" }}
+            onClick={handleSubmit(onSubmit)}
+          >
+            Create rule
+          </Button>
+        </Stack>
       </Stack>
-      <Stack direction="row" spacing={1}>
-        <Button variant="outlined" color="neutral" sx={{ flex: "1 1 auto" }} onClick={onBack}>
-          Back
-        </Button>
-        <Button
-          variant="solid"
-          color="primary"
-          sx={{ flex: "1 1 auto" }}
-          onClick={handleSubmit(onSubmit)}
-        >
-          Create rule
-        </Button>
-      </Stack>
-    </Stack>
+      {lastResponseBody && (
+        <Modal open={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)}>
+          <ModalDialog
+            sx={(theme) => ({
+              [theme.breakpoints.only("xs")]: {
+                top: "unset",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                borderRadius: 0,
+                transform: "none",
+                maxWidth: "unset",
+              },
+            })}
+          >
+            <ModalClose />
+            <Typography id="nested-modal-title" level="title-md">
+              Are you absolutely sure?
+            </Typography>
+            <Typography id="nested-modal-description" textColor="text.tertiary">
+              You&apos;ve made changes to the response body. Are you sure you want to discard them
+              and apply the last response body?
+            </Typography>
+            <Stack
+              sx={{
+                mt: 1,
+                display: "flex",
+                gap: 1,
+                flexDirection: { xs: "column", sm: "row-reverse" },
+              }}
+            >
+              <Button
+                variant="solid"
+                color="primary"
+                onClick={() => {
+                  setIsConfirmModalOpen(false);
+                  setValue("body", lastResponseBody);
+                }}
+              >
+                Continue
+              </Button>
+              <Button
+                variant="outlined"
+                color="neutral"
+                onClick={() => setIsConfirmModalOpen(false)}
+              >
+                Cancel
+              </Button>
+            </Stack>
+          </ModalDialog>
+        </Modal>
+      )}
+    </>
   );
 };

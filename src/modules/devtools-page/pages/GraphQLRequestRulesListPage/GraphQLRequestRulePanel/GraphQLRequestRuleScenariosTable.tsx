@@ -6,7 +6,6 @@ import {
   Checkbox,
   Chip,
   IconButton,
-  Link,
   Sheet,
   Tab,
   TabList,
@@ -18,8 +17,17 @@ import {
 
 import { Scenario } from "../../../../common/types/graphQL-request-rule";
 import { NetworkRequestStatus } from "../../../components/NetworkRequestStatus";
-import { CopyButton } from "../../../ui/CopyButton";
-import { Description } from "../../../ui/Description";
+import {
+  CodeView,
+  CodeViewCloseToolbarItem,
+  CodeViewContainer,
+  CodeViewExitFullscreenToolbarItem,
+  CodeViewFoldToolbarItem,
+  CodeViewFullscreenToolbarItem,
+  CodeViewUnfoldToolbarItem,
+  FullscreenCodeView,
+} from "../../../ui/CodeView";
+import { Toolbar, ToolbarItemsGroup } from "../../../ui/Toolbar";
 
 export type GraphQLRequestRuleScenariosTableProps = {
   scenarios: Scenario[];
@@ -195,11 +203,11 @@ const Row: FC<RowProps> = ({
           {open && (
             <Tabs size="sm" sx={{ background: (theme) => theme.palette.background.level1 }}>
               <TabList>
-                <Tab disabled={disabled}>Request</Tab>
-                <Tab disabled={disabled}>Response</Tab>
+                {/* <Tab disabled={disabled}>Request</Tab>
+                <Tab disabled={disabled}>Response</Tab> */}
                 <Tab disabled={disabled}>Body</Tab>
               </TabList>
-              <TabPanel value={0} sx={{ background: (theme) => theme.palette.background.level1 }}>
+              {/* <TabPanel value={0} sx={{ background: (theme) => theme.palette.background.level1 }}>
                 <Typography
                   level="title-md"
                   textColor={disabled ? "neutral.plainDisabledColor" : "neutral.plainColor"}
@@ -255,9 +263,29 @@ const Row: FC<RowProps> = ({
                     </Description.Row>
                   ))}
                 </Description.Root>
-              </TabPanel>
-              <TabPanel value={2} sx={{ background: (theme) => theme.palette.background.level1 }}>
-                <Link level="body-sm">See body</Link>
+              </TabPanel> */}
+              <TabPanel
+                value={0}
+                sx={{ background: (theme) => theme.palette.background.level1, padding: 0 }}
+              >
+                <CodeViewContainer>
+                  <Toolbar>
+                    <CodeViewFullscreenToolbarItem size="sm" />
+                    <CodeViewFoldToolbarItem size="sm" />
+                    <CodeViewUnfoldToolbarItem size="sm" />
+                  </Toolbar>
+                  <CodeView code={scenario.response.body} height="200px" language="json" />
+                  <FullscreenCodeView>
+                    <Toolbar justify="space-between">
+                      <ToolbarItemsGroup>
+                        <CodeViewExitFullscreenToolbarItem size="md" />
+                        <CodeViewFoldToolbarItem size="md" />
+                        <CodeViewUnfoldToolbarItem size="md" />
+                      </ToolbarItemsGroup>
+                      <CodeViewCloseToolbarItem size="md" />
+                    </Toolbar>
+                  </FullscreenCodeView>
+                </CodeViewContainer>
               </TabPanel>
             </Tabs>
           )}
@@ -266,23 +294,3 @@ const Row: FC<RowProps> = ({
     </>
   );
 };
-
-const mockHeaders = [
-  {
-    name: "Authorization",
-    value: "Bearer fe0e8768-3b2f-4f63-983d-1a74c26dde1e",
-  },
-  {
-    name: "access-control-allow-credentials",
-    value: "true",
-  },
-  {
-    name: "access-control-allow-origin",
-    value: "https://www.google.com",
-  },
-  {
-    name: "set-cookie",
-    value:
-      "SIDCC=fe0e8768-3b2f-4f63-983d-1a74c26dde1efe0e8768-3b2f-4f63-983d-1a74c26dde1e; expires=Thu, 14-Apr-2022 08:09:50 GMT; path=/; domain=.google.com; priority=high",
-  },
-];

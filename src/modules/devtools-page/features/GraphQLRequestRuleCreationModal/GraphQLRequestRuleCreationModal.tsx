@@ -197,6 +197,7 @@ export const GraphQLRequestRuleCreationModal: FC<GraphQLRequestRuleCreationModal
             <ResponseRuleConfigurationForm
               onSubmit={handleResponseRuleSubmit}
               onBack={() => setActiveStep(0)}
+              lastResponseBody={selectedRequest?.networkRequest?.response?.body ?? null}
             />
           </Sheet>
           {activeStep === 2 && (

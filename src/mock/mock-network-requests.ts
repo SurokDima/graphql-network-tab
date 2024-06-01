@@ -12,7 +12,12 @@ const createRequest = ({
     variables?: Record<string, unknown>;
     extensions?: Record<string, unknown>;
   };
-  response: Record<string, unknown>;
+  response:
+    | string
+    | {
+        data: string;
+        status?: number;
+      };
 }): chrome.devtools.network.Request => {
   return {
     time: 1099.4580000406131,
@@ -50,7 +55,7 @@ const createRequest = ({
       bodySize: 578,
     },
     response: {
-      status: 200,
+      status: typeof response === "string" ? 200 : response.status ?? 200,
       headers: [
         {
           name: "cookie",
@@ -62,7 +67,7 @@ const createRequest = ({
       bodySize: 3364,
     },
     getContent: (cb) => {
-      cb(JSON.stringify(response), "utf-8");
+      cb(typeof response === "string" ? response : response.data, "utf-8");
     },
   } as chrome.devtools.network.Request;
 };
@@ -88,7 +93,7 @@ export const mockRequests = [
         title: "Batman",
       },
     },
-    response: {
+    response: JSON.stringify({
       data: {
         getMovie: {
           id: "1",
@@ -96,7 +101,7 @@ export const mockRequests = [
           genre: "Action",
         },
       },
-    },
+    }),
   }),
   createRequest({
     request: {
@@ -113,7 +118,7 @@ export const mockRequests = [
         title: "Batman",
       },
     },
-    response: {
+    response: JSON.stringify({
       data: {
         searchMovie: [
           {
@@ -133,7 +138,7 @@ export const mockRequests = [
           },
         ],
       },
-    },
+    }),
   }),
   createRequest({
     request: {
@@ -150,7 +155,7 @@ export const mockRequests = [
         title: "Batman",
       },
     },
-    response: {
+    response: JSON.stringify({
       data: {
         createMovie: {
           id: "4",
@@ -202,7 +207,7 @@ export const mockRequests = [
           },
         },
       },
-    },
+    }),
   }),
   // createRequest({
   //   request: [
@@ -385,7 +390,7 @@ export const mockRequests = [
         id: "2",
       },
     },
-    response: {
+    response: JSON.stringify({
       data: {
         actorDetails: [],
       },
@@ -417,7 +422,7 @@ export const mockRequests = [
           },
         },
       },
-    },
+    }),
   }),
   // createRequest({
   //   request: [
@@ -457,12 +462,36 @@ export const mockRequests = [
         id: "3",
       },
     },
-    response: {
+    response: JSON.stringify({
       errors: [
         {
           message: "Details for actor with ID 3 could not be fetched",
         },
       ],
+    }),
+  }),
+  createRequest({
+    request: {
+      query: `
+        query actorDetailsQuery($id: String) {
+          actorDetails(id: $id) {
+            ...actorDetailsData
+            __typename
+          }
+        }
+        fragment actorDetailsData on ActorDetail {
+          id
+          name
+          __typename
+        }
+      `,
+      variables: {
+        id: "3",
+      },
+    },
+    response: {
+      status: 500,
+      data: "Internal server error",
     },
   }),
   // WebSocket (GraphQL subscription)
