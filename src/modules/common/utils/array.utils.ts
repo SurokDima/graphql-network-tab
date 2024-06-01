@@ -22,3 +22,10 @@ export function toggleItem<TItem>(
 
   return [...array, item];
 }
+
+/**
+ * Inserts an element between each element of an array
+ *
+ */
+export const interleave = <TItem>(arr: TItem[], x: TItem): TItem[] =>
+  arr.flatMap((e) => [e, x]).slice(0, -1);

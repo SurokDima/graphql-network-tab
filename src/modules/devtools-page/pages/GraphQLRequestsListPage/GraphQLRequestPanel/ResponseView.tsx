@@ -1,6 +1,6 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 
-import { GraphQLRequest } from "../../../../common/types/graphQL-request";
+import { isJSON } from "../../../../common/utils/string.utils";
 import {
   CodeView,
   CodeViewCloseToolbarItem,
@@ -13,25 +13,35 @@ import {
 } from "../../../ui/CodeView";
 import { Toolbar, ToolbarItemsGroup } from "../../../ui/Toolbar";
 
-type GraphQLRequestViewProps = {
-  request: GraphQLRequest;
+type ResponseViewProps = {
+  response: string;
 };
 
-export const GraphQLRequestView: FC<GraphQLRequestViewProps> = ({ request }) => {
+export const ResponseView: FC<ResponseViewProps> = ({ response }) => {
+  const language = useMemo(() => (isJSON(response) ? "json" : "text"), [response]);
+
   return (
     <CodeViewContainer>
       <Toolbar>
         <CodeViewFullscreenToolbarItem size="sm" />
-        <CodeViewFoldToolbarItem size="sm" />
-        <CodeViewUnfoldToolbarItem size="sm" />
+        {language === "json" && (
+          <>
+            <CodeViewFoldToolbarItem size="sm" />
+            <CodeViewUnfoldToolbarItem size="sm" />
+          </>
+        )}
       </Toolbar>
-      <CodeView code={request.rawGraphQL} language="graphql" />
+      <CodeView code={response} language={language} />
       <FullscreenCodeView>
         <Toolbar justify="space-between">
           <ToolbarItemsGroup>
             <CodeViewExitFullscreenToolbarItem size="md" />
-            <CodeViewFoldToolbarItem size="md" />
-            <CodeViewUnfoldToolbarItem size="md" />
+            {language === "json" && (
+              <>
+                <CodeViewFoldToolbarItem size="md" />
+                <CodeViewUnfoldToolbarItem size="md" />
+              </>
+            )}
           </ToolbarItemsGroup>
           <CodeViewCloseToolbarItem size="md" />
         </Toolbar>

@@ -1,9 +1,8 @@
-import { FC } from "react";
+import { FC, useState, useTransition } from "react";
 
 import { Close } from "@mui/icons-material";
 import {
   AccordionSummary as JoyAccordionSummary,
-  Box,
   Link,
   Tab,
   TabList,
@@ -18,6 +17,7 @@ import {
   Stack,
   Typography,
   IconButton,
+  Box,
 } from "@mui/joy";
 
 import { GraphQLRequestRule } from "../../../../common/types/graphQL-request-rule";
@@ -38,6 +38,15 @@ export const GraphQLRequestRulePanel: FC<GraphQLRequestRulePanelProps> = ({
   disabled = false,
   onClose,
 }) => {
+  const [index, setIndex] = useState(0);
+  const [isPending, startTransition] = useTransition();
+
+  const handleTabChange = (index: number) => {
+    startTransition(() => {
+      setIndex(index);
+    });
+  };
+
   return (
     <Stack height="100%">
       <Stack
@@ -67,96 +76,100 @@ export const GraphQLRequestRulePanel: FC<GraphQLRequestRulePanelProps> = ({
           <Close />
         </IconButton>
       </Stack>
-      <Box
+
+      {isPending && <>Something</>}
+      <Tabs
+        size="sm"
+        value={index}
+        onChange={(_, value) => handleTabChange(value as number)}
         sx={{
+          height: "100%",
           flex: "1 1 auto",
-          backgroundColor: (theme) => theme.palette.background.surface,
+          borderLeft: (theme) => `2px solid ${theme.palette.divider}`,
         }}
       >
-        <Tabs
-          size="sm"
-          sx={{
-            height: "100%",
-            flex: "1 1 auto",
-            borderLeft: (theme) => `2px solid ${theme.palette.divider}`,
-          }}
-        >
-          {/* TODO: Add adaptivity for a tabs list*/}
-          <TabList sx={{ boxShadow: (theme) => `inset 0 -2px ${theme.palette.divider}` }}>
-            <Tab disabled={disabled}>Rule info</Tab>
-          </TabList>
-          <TabPanel value={0}>
-            <AccordionGroup
-              size="sm"
-              sx={{
-                [`& .${accordionSummaryClasses.button}:hover`]: {
-                  bgcolor: "transparent",
-                },
-                [`& .${accordionDetailsClasses.content}`]: {
-                  boxShadow: (theme) => `inset 0 1px ${theme.vars.palette.divider}`,
-                  [`&.${accordionDetailsClasses.expanded}`]: {
-                    paddingBlock: "0.75rem",
+        {/* TODO: Add adaptivity for a tabs list*/}
+        <TabList sx={{ boxShadow: (theme) => `inset 0 -2px ${theme.palette.divider}` }}>
+          <Tab disabled={disabled}>Rule info</Tab>
+        </TabList>
+        <TabPanel value={0} sx={{ padding: "0", flex: "1 1 0" }}>
+          <Stack height="100%">
+            <Box>
+              <AccordionGroup
+                size="sm"
+                sx={{
+                  [`& .${accordionSummaryClasses.button}:hover`]: {
+                    bgcolor: "transparent",
                   },
-                },
-              }}
-            >
-              <Accordion disabled={disabled} defaultExpanded>
-                <AccordionSummary>General</AccordionSummary>
-                <AccordionDetails variant="soft">
-                  <Description.Root>
-                    <Description.Row>
-                      <Description.RowLabel>
-                        <Typography
-                          textColor={disabled ? "neutral.plainDisabledColor" : "text.plainColor"}
-                        >
-                          Operation name
-                        </Typography>
-                      </Description.RowLabel>
-                      <Description.RowValue>
-                        <Typography
-                          textColor={disabled ? "neutral.plainDisabledColor" : "text.plainColor"}
-                        >
-                          {graphQlRequestRule.operationName}
-                        </Typography>
-                      </Description.RowValue>
-                      <Description.RowActions>
-                        <CopyButton disabled={disabled} value={graphQlRequestRule.operationName} />
-                      </Description.RowActions>
-                    </Description.Row>
-                    <Description.Row>
-                      <Description.RowLabel>
-                        <Typography
-                          textColor={disabled ? "neutral.plainDisabledColor" : "text.plainColor"}
-                        >
-                          Endpoint
-                        </Typography>
-                      </Description.RowLabel>
-                      <Description.RowValue>
-                        <Link
-                          disabled={disabled}
-                          href={graphQlRequestRule.endpoint}
-                          target="_blank"
-                        >
-                          {graphQlRequestRule.endpoint}
-                        </Link>
-                      </Description.RowValue>
-                      <Description.RowActions>
-                        <CopyButton disabled={disabled} value={graphQlRequestRule.endpoint} />
-                      </Description.RowActions>
-                    </Description.Row>
-                  </Description.Root>
-                </AccordionDetails>
-              </Accordion>
-            </AccordionGroup>
+                  [`& .${accordionDetailsClasses.content}`]: {
+                    boxShadow: (theme) => `inset 0 1px ${theme.vars.palette.divider}`,
+                    [`&.${accordionDetailsClasses.expanded}`]: {
+                      paddingBlock: "0.75rem",
+                    },
+                  },
+                }}
+              >
+                <Accordion disabled={disabled} defaultExpanded>
+                  <AccordionSummary>General</AccordionSummary>
+                  <AccordionDetails variant="soft">
+                    <Description.Root>
+                      <Description.Row>
+                        <Description.RowLabel>
+                          <Typography
+                            textColor={disabled ? "neutral.plainDisabledColor" : "text.plainColor"}
+                          >
+                            Operation name
+                          </Typography>
+                        </Description.RowLabel>
+                        <Description.RowValue>
+                          <Typography
+                            textColor={disabled ? "neutral.plainDisabledColor" : "text.plainColor"}
+                          >
+                            {graphQlRequestRule.operationName}
+                          </Typography>
+                        </Description.RowValue>
+                        <Description.RowActions>
+                          <CopyButton
+                            disabled={disabled}
+                            value={graphQlRequestRule.operationName}
+                          />
+                        </Description.RowActions>
+                      </Description.Row>
+                      <Description.Row>
+                        <Description.RowLabel>
+                          <Typography
+                            textColor={disabled ? "neutral.plainDisabledColor" : "text.plainColor"}
+                          >
+                            Endpoint
+                          </Typography>
+                        </Description.RowLabel>
+                        <Description.RowValue>
+                          <Link
+                            disabled={disabled}
+                            href={graphQlRequestRule.endpoint}
+                            target="_blank"
+                          >
+                            {graphQlRequestRule.endpoint}
+                          </Link>
+                        </Description.RowValue>
+                        <Description.RowActions>
+                          <CopyButton disabled={disabled} value={graphQlRequestRule.endpoint} />
+                        </Description.RowActions>
+                      </Description.Row>
+                    </Description.Root>
+                  </AccordionDetails>
+                </Accordion>
+              </AccordionGroup>
+            </Box>
             <GraphQLRequestRuleScenariosList
               disabled={disabled}
               graphQLRequestTarget={graphQlRequestRule}
               scenarios={graphQlRequestRule.scenarios}
               activeScenarioId={graphQlRequestRule.activeScenarioId}
             />
-          </TabPanel>
-        </Tabs>
-      </Box>
+          </Stack>
+        </TabPanel>
+      </Tabs>
     </Stack>
   );
 };

@@ -8,3 +8,12 @@ import { Result, wrap } from "../types/result";
 export const getDomain = (url: string): Result<string> => {
   return wrap(() => new URL(url).hostname)();
 };
+
+export const isJSON = (str: string): boolean => {
+  try {
+    JSON.parse(str);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
