@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 
 import { Add } from "@mui/icons-material";
-import { Box, Button, Input, Skeleton, Stack, Switch } from "@mui/joy";
+import { Box, Button, Input, Skeleton, Stack, Switch, Typography } from "@mui/joy";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 import { WebsiteConfig } from "../../../common/types/website-config";
@@ -11,6 +11,8 @@ import { useGraphQLRules } from "../../hooks/useGraphQLRequestRules";
 import { useStorageItem } from "../../hooks/useStorage";
 import { setFeatureEnabled } from "../../services/graphQL-request-rules";
 import { getCurrentTab } from "../../services/tabs";
+import { ConfirmModal } from "../../ui/ConfirmModal";
+import { InlineAlert } from "../../ui/InlineAlert";
 import { ToolbarItem } from "../../ui/ToolbarItem";
 
 import { GraphQLRequestRulePanel } from "./GraphQLRequestRulePanel/GraphQLRequestRulePanel";
@@ -19,7 +21,6 @@ import { GraphQLRequestRulesList } from "./GraphQLRequestRulesList";
 export const GraphQLRequestRulesListPage: FC = () => {
   const { graphQLRules, loading, error } = useGraphQLRules();
   const [checked, setChecked] = useState(false);
-  console.info("[Devtools Page]: GraphQLRequestRulesListPage rerender");
 
   const { loading: rulesEnabledLoading } = useStorageItem<WebsiteConfig[] | null | undefined>(
     "requestRules",
@@ -36,11 +37,17 @@ export const GraphQLRequestRulesListPage: FC = () => {
           (websiteConfig) => websiteConfig.domain === domain && websiteConfig.enabled
         );
 
-        console.info("[Devtools Page]: Settings rules enabled to", isEnabled);
+        if (isEnabled) {
+          setHasUserBeenWarned(true);
+        }
+
         setChecked(isEnabled);
       },
     }
   );
+
+  const [hasUserBeenWarned, setHasUserBeenWarned] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const [selectedRuleId, setSelectedRuleId] = useState<string | null>(null);
   const selectedRule = graphQLRules.find((rule) => rule.id === selectedRuleId);
@@ -48,8 +55,41 @@ export const GraphQLRequestRulesListPage: FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [startsWith, setStartsWith] = useState("");
 
+  const setGraphQLRulesEnabled = async (checked: boolean) => {
+    setChecked(checked);
+    const currentTab = await getCurrentTab();
+    if (!currentTab.url) return;
+    const domainResult = getDomain(currentTab.url);
+    if (!domainResult.ok) return;
+    const domain = domainResult.value;
+    setFeatureEnabled(domain, checked);
+  };
+
   return (
     <>
+      <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        riskLevel="medium"
+        content={
+          <>
+            <InlineAlert
+              type="info"
+              message='The feature relies on substituting global "fetch" function. This may cause issues with other extensions or websites.'
+            />
+
+            <Typography level="body-md" display="inline">
+              Are you sure you want to enable it?
+            </Typography>
+          </>
+        }
+        onCancel={() => setIsConfirmModalOpen(false)}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={() => {
+          setHasUserBeenWarned(true);
+          setIsConfirmModalOpen(false);
+          setGraphQLRulesEnabled(true);
+        }}
+      />
       <ToolbarItem>
         {rulesEnabledLoading ? (
           <Stack direction="row" gap={1} alignItems="center">
@@ -70,15 +110,13 @@ export const GraphQLRequestRulesListPage: FC = () => {
             checked={checked}
             onChange={async (event: React.ChangeEvent<HTMLInputElement>) => {
               const checked = event.target.checked;
-              setChecked(checked);
-              console.info("[Devtools Page]: Settings rules enabled to", checked);
 
-              const currentTab = await getCurrentTab();
-              if (!currentTab.url) return;
-              const domainResult = getDomain(currentTab.url);
-              if (!domainResult.ok) return;
-              const domain = domainResult.value;
-              setFeatureEnabled(domain, checked);
+              if (!hasUserBeenWarned && checked) {
+                setIsConfirmModalOpen(true);
+                return;
+              }
+
+              setGraphQLRulesEnabled(checked);
             }}
             color={checked ? "success" : "neutral"}
             variant={checked ? "solid" : "outlined"}
