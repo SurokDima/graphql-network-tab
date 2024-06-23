@@ -17,17 +17,14 @@ export const useStorageItem = <TData>(
   useEffect(() => {
     setLoading(true);
     setError(null);
-    console.info("[Devtools Page]: Fetching data from storage", key);
 
     storage
       .getItem<TData>(key)
       .then(async (value) => {
-        console.info("[Devtools Page]: Fetched data from storage", key, value);
         setData(value);
         onComplete?.(value);
       })
       .catch((error) => {
-        console.error("[Devtools Page]: Error fetching data from storage", key, error);
         setError(error);
       })
       .finally(() => setLoading(false));

@@ -14,3 +14,7 @@ export type NetworkRequest = {
 };
 
 export type Headers = Record<string, string>;
+
+export const isAborted = (networkRequest: NetworkRequest) => {
+  return networkRequest.response.statusCode === 0;
+};

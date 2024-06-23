@@ -1,4 +1,3 @@
-import { nanoid } from "nanoid";
 import { FC, useCallback, useEffect } from "react";
 
 import { atom, useAtom } from "jotai";
@@ -46,7 +45,7 @@ const mapNetworkToGraphQLRequest = (networkRequest: NetworkRequest): GraphQLRequ
   if (!details.ok) return null;
 
   return {
-    id: nanoid(),
+    id: networkRequest.id,
     operation: {
       name: details.value.operationName,
       type: details.value.operationType,

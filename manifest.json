@@ -3,16 +3,7 @@
   "name": "GraphQL Network Tab",
   "version": "3.1.0",
   "devtools_page": "devtools_page.html",
-  "permissions": [
-    "clipboardWrite",
-    "contextMenus",
-    "declarativeNetRequest",
-    "declarativeNetRequestFeedback",
-    "scripting",
-    "storage",
-    "tabs",
-    "webRequest"
-  ],
+  "permissions": ["clipboardWrite", "scripting", "storage", "tabs", "webRequest"],
   "host_permissions": ["<all_urls>"],
   "content_scripts": [
     {
