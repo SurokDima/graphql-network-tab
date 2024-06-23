@@ -7,6 +7,7 @@ import ReactDOM from "react-dom/client";
 
 import App from "./App";
 import { GraphQLRequestsProvider } from "./providers/GraphQLRequestsProvider";
+import { NetworkRequestsProvider } from "./providers/NetworkRequestsProvider";
 import { ToastProvider } from "./providers/ToastProvider";
 
 import "./index.scss";
@@ -17,10 +18,12 @@ hljs.registerLanguage("javascript", graphql);
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <CssVarsProvider defaultMode="dark">
-      <GraphQLRequestsProvider>
-        <ToastProvider />
-        <App />
-      </GraphQLRequestsProvider>
+      <NetworkRequestsProvider>
+        <GraphQLRequestsProvider>
+          <ToastProvider />
+          <App />
+        </GraphQLRequestsProvider>
+      </NetworkRequestsProvider>
     </CssVarsProvider>
   </React.StrictMode>
 );

@@ -2,9 +2,8 @@ import { FC } from "react";
 
 import { Rule } from "@mui/icons-material";
 import { Avatar } from "@mui/joy";
-import { useAtom } from "jotai";
 
-import { graphQLRequestsAtom } from "../store";
+import { useGraphQLRequests } from "../providers/GraphQLRequestsProvider";
 
 import { GraphQLRequestIcon } from "./GraphQLRequestIcon";
 
@@ -17,7 +16,7 @@ export const GraphQLRequestRuleIcon: FC<GraphQLRequestRuleIconProps> = ({
   operationName,
   disabled = false,
 }) => {
-  const [graphQLRequests] = useAtom(graphQLRequestsAtom);
+  const { graphQLRequests } = useGraphQLRequests();
 
   const operationType = graphQLRequests.find((request) => request.operation.name === operationName)
     ?.operation.type;
