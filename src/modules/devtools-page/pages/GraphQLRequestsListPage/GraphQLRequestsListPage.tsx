@@ -3,13 +3,13 @@ import { FC, useState } from "react";
 import { Box } from "@mui/joy";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
-import { useGraphQLRequests } from "../../hooks/useGraphQLRequests";
+import { useGraphQLRequests } from "../../providers/GraphQLRequestsProvider";
 
 import { GraphQLRequestPanel } from "./GraphQLRequestPanel";
 import { GraphQLRequestsListPanel } from "./GraphQLRequestsListPanel";
 
 export const GraphQLRequestsListPage: FC = () => {
-  const { graphQLRequests, clearRequests } = useGraphQLRequests();
+  const { graphQLRequests, clearRequests, setShouldPreserveLog, settings } = useGraphQLRequests();
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
 
   const handleSelectRequest = (requestId: string) => {
@@ -28,6 +28,8 @@ export const GraphQLRequestsListPage: FC = () => {
       <PanelGroup direction="horizontal">
         <Panel>
           <GraphQLRequestsListPanel
+            shouldPreserveLog={settings.shouldPreserveLog}
+            onPreserveLogChange={setShouldPreserveLog}
             type={selectedRequest ? "short" : "long"}
             graphQLRequests={graphQLRequests}
             onSelectRequest={handleSelectRequest}

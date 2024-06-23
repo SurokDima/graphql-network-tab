@@ -18,7 +18,7 @@ import { Controller, useForm } from "react-hook-form";
 
 import { unique } from "../../../common/utils/array.utils";
 import { GraphQLRequestIcon } from "../../components/GraphQLRequestIcon";
-import { useGraphQLRequests } from "../../hooks/useGraphQLRequests";
+import { useGraphQLRequests } from "../../providers/GraphQLRequestsProvider";
 
 export type RequestRuleConfigurationFormProps = {
   onSubmit: (data: RequestRuleConfigurationFormData) => void;

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Graphql Network Tab",
-  "version": "0.0.0",
+  "name": "GraphQL Network Tab",
+  "version": "3.1.0",
   "devtools_page": "devtools_page.html",
   "permissions": [
     "clipboardWrite",

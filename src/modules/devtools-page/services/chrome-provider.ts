@@ -18,3 +18,7 @@ export const getContentAsync = (request: chrome.devtools.network.Request) => {
     });
   });
 };
+
+export const onNavigate = (callback: () => void) => {
+  return chromeProvider.devtools.network.onNavigated.addListener(callback);
+};

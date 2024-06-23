@@ -32,6 +32,7 @@
     "graphql-tag": "^2.12.6",
     "highlight.js": "^11.9.0",
     "jotai": "^2.7.1",
+    "lodash-es": "^4.17.21",
     "monaco-editor": "^0.48.0",
     "nanoid": "^5.0.6",
     "react": "^18.2.0",
@@ -50,6 +51,7 @@
   "devDependencies": {
     "@crxjs/vite-plugin": "^1.0.14",
     "@types/chrome": "^0.0.262",
+    "@types/lodash-es": "^4",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
     "@typescript-eslint/eslint-plugin": "^6.8.0",

@@ -6,24 +6,30 @@ import { Stack, Box, IconButton, Input } from "@mui/joy";
 import { GraphQLOperationType, GraphQLRequest } from "../../../../common/types/graphQL-request";
 import { isDefined } from "../../../../common/utils/boolean.utils";
 import { pipe } from "../../../../common/utils/function.utils";
+import { CheckboxInput } from "../../../ui/Input/CheckboxInput";
 import { Tag, TagsSelector } from "../../../ui/TagsSelector";
 
 import { GraphQLRequestsList } from "./GraphQLRequestsList";
 
+// TODO improve API
 export type GraphQLRequestsListPanelProps = {
   graphQLRequests: GraphQLRequest[];
   selectedRequestId: string | null;
   type: "short" | "long";
+  shouldPreserveLog: boolean;
   onSelectRequest: (requestId: string) => void;
   onClearRequests: () => void;
+  onPreserveLogChange: (shouldPreserveLog: boolean) => void;
 };
 
 export const GraphQLRequestsListPanel: FC<GraphQLRequestsListPanelProps> = ({
   graphQLRequests,
   type,
   selectedRequestId,
+  shouldPreserveLog,
   onSelectRequest,
   onClearRequests,
+  onPreserveLogChange,
 }) => {
   const [operationTypes, setOperationTypes] = useState<GraphQLOperationType[]>([
     "mutation",
@@ -60,7 +66,7 @@ export const GraphQLRequestsListPanel: FC<GraphQLRequestsListPanelProps> = ({
             borderBottom: (theme) => `2px solid ${theme.palette.divider}`,
           }}
         >
-          <Stack sx={{ flexDirection: "row", gap: 2 }}>
+          <Stack sx={{ flexDirection: "row", gap: 2, alignItems: "center" }}>
             <IconButton variant="plain" size="sm" onClick={onClearRequests}>
               <NotInterestedIcon />
             </IconButton>
@@ -72,6 +78,12 @@ export const GraphQLRequestsListPanel: FC<GraphQLRequestsListPanelProps> = ({
               sx={{ width: "250px" }}
               placeholder="Filter..."
               size="sm"
+            />
+            <CheckboxInput
+              size="sm"
+              label="Preserve log"
+              value={shouldPreserveLog}
+              onChange={onPreserveLogChange}
             />
           </Stack>
         </Stack>

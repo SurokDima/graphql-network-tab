@@ -1,9 +1,9 @@
 import { nanoid } from "nanoid";
 import { useCallback, useEffect, useMemo } from "react";
 
-import { useAtom } from "jotai";
+import { atom, useAtom } from "jotai";
 
-import { toolbarAtom } from "../store";
+const toolbarAtom = atom<{ id: string; renderer: () => JSX.Element }[]>([]);
 
 export const useToolbar = () => {
   const [items, setItems] = useAtom(toolbarAtom);

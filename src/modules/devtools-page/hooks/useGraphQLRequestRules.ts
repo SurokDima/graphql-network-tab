@@ -1,12 +1,22 @@
 import { useCallback, useEffect } from "react";
 
-import { useAtom } from "jotai";
+import { atom, useAtom } from "jotai";
 
+import { GraphQLRequestRule } from "../../common/types/graphQL-request-rule";
 import { WebsiteConfig } from "../../common/types/website-config";
 import { getDomain } from "../../common/utils/string.utils";
 import { getCurrentTab } from "../services/tabs";
 import { storage } from "../storage";
-import { graphQLRulesStateAtom } from "../store";
+
+const graphQLRulesStateAtom = atom<{
+  data: GraphQLRequestRule[] | null;
+  loading: boolean;
+  error: Error | null;
+}>({
+  data: null,
+  loading: true,
+  error: null,
+});
 
 export const useGraphQLRules = () => {
   const [{ data: graphQLRules, loading, error }, setGraphQLRulesState] =
