@@ -1,6 +1,6 @@
 import { FC, Fragment } from "react";
 
-import { Stack, Button, Box, ButtonGroup } from "@mui/joy";
+import { Stack, Button, Box, ButtonGroup, Badge } from "@mui/joy";
 import { Outlet, useLocation, useNavigate } from "react-router";
 
 import { useToolbar } from "../hooks/useToolbar";
@@ -50,7 +50,9 @@ export const MainLayout: FC = () => {
             href="/rules"
             color="neutral"
           >
-            Rules
+            <Badge color="danger" badgeContent="Beta" size="sm">
+              Rules
+            </Badge>
           </Button>
         </ButtonGroup>
         <Stack

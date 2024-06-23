@@ -3,7 +3,7 @@ import { FC, useCallback, useEffect, useRef } from "react";
 
 import { atom, useAtom } from "jotai";
 
-import { Headers, NetworkRequest } from "../../common/types/network-request";
+import { Headers, NetworkRequest, isAborted } from "../../common/types/network-request";
 import { chromeProvider, getContentAsync, getHARLogAsync } from "../services/chrome-provider";
 
 const networkRequestsAtom = atom<NetworkRequest[]>([]);
@@ -26,6 +26,7 @@ export const NetworkRequestsProvider: FC<NetworkRequestsProviderProps> = ({ chil
   const handleNewRequest = useCallback(
     async (chromeRequest: chrome.devtools.network.Request) => {
       const networkRequest = await mapRequestToNetworkRequest(chromeRequest);
+      if (isAborted(networkRequest)) return;
       setNetworkRequests((prev) => [...prev, networkRequest]);
     },
     [setNetworkRequests]

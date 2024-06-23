@@ -22,7 +22,7 @@ const items: {
   success: { title: "Success", color: "success", icon: <CheckCircle /> },
   warning: { title: "Warning", color: "warning", icon: <Warning /> },
   error: { title: "Error", color: "danger", icon: <Report /> },
-  info: { title: "Neutral", color: "neutral", icon: <Info /> },
+  info: { title: "Info", color: "neutral", icon: <Info /> },
 };
 
 export const InlineAlert: FC<InlineAlertProps> = ({
