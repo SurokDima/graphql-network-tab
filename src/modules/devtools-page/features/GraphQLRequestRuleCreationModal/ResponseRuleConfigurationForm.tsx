@@ -2,22 +2,11 @@ import { FC, useState } from "react";
 import { z } from "zod";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { InfoOutlined } from "@mui/icons-material";
-import {
-  Stack,
-  FormControl,
-  FormLabel,
-  FormHelperText,
-  Button,
-  Modal,
-  ModalDialog,
-  ModalClose,
-  Typography,
-} from "@mui/joy";
-import { Controller, useForm } from "react-hook-form";
+import { Stack, Button, Modal, ModalDialog, ModalClose, Typography } from "@mui/joy";
+import { useForm } from "react-hook-form";
 
-import { HttpStatusCodeInput } from "../../components/HttpStatusCodeInput";
-import { CodeEditorFormField } from "../../ui/FormField/CodeEditorField";
+import { CodeEditorFormField } from "../../ui/FormField/CodeEditorFormField";
+import { HttpStatusCodeSelectorFormField } from "../../ui/FormField/HttpStatusCodeSelectorFormField";
 
 export type ResponseRuleConfigurationFormProps = {
   onSubmit: (data: ResponseRuleConfigurationFormData) => void;
@@ -75,39 +64,21 @@ export const ResponseRuleConfigurationForm: FC<ResponseRuleConfigurationFormProp
     <>
       <Stack spacing={3}>
         <Stack spacing={1}>
-          <FormControl error={!!errors.statusCode}>
-            <FormLabel>Status</FormLabel>
-            <Controller
-              name="statusCode"
-              control={control}
-              render={({ field: { onChange, ref: _, ...field } }) => (
-                <HttpStatusCodeInput onInputChange={onChange} {...field} />
-              )}
-            />
-            <FormHelperText>
-              {errors.statusCode ? (
-                <>
-                  <InfoOutlined />
-                  {errors.statusCode.message}
-                </>
-              ) : (
-                "Status code for the response"
-              )}
-            </FormHelperText>
-          </FormControl>
+          <HttpStatusCodeSelectorFormField
+            control={control}
+            name="statusCode"
+            errors={errors}
+            helperText="Status code for the response"
+            label="Status"
+          />
           <Stack gap={1}>
-            <Controller
-              name="body"
+            <CodeEditorFormField
+              language="json"
               control={control}
-              render={({ field: { onChange, value } }) => (
-                <CodeEditorFormField
-                  height={200}
-                  label="Body"
-                  onChange={onChange}
-                  value={value}
-                  language="json"
-                />
-              )}
+              errors={errors}
+              height={200}
+              label="Body"
+              name="body"
             />
             {lastResponseBody && (
               <Stack direction="row" justifyContent="flex-end">
