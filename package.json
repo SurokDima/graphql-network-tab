@@ -15,7 +15,8 @@
     "prettier:format": "prettier --write .",
     "prettier:check": "prettier --check .",
     "tsc:check": "tsc --noEmit",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "commit:checks": "yarn lint && yarn prettier:check && yarn tsc:check"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",

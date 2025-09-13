@@ -3,7 +3,7 @@ import { FC } from "react";
 import { Rule } from "@mui/icons-material";
 import { Avatar } from "@mui/joy";
 
-import { useGraphQLRequests } from "../providers/GraphQLRequestsProvider";
+import { useGraphQLRequests } from "../hooks/useGraphQLRequests";
 
 import { GraphQLRequestIcon } from "./GraphQLRequestIcon";
 

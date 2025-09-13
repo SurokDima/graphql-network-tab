@@ -6,7 +6,6 @@ import { CssVarsProvider } from "@mui/joy";
 import ReactDOM from "react-dom/client";
 
 import App from "./App";
-import { GraphQLRequestsProvider } from "./providers/GraphQLRequestsProvider";
 import { NetworkRequestsProvider } from "./providers/NetworkRequestsProvider";
 import { ToastProvider } from "./providers/ToastProvider";
 
@@ -19,10 +18,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <CssVarsProvider defaultMode="dark">
       <NetworkRequestsProvider>
-        <GraphQLRequestsProvider>
-          <ToastProvider />
-          <App />
-        </GraphQLRequestsProvider>
+        <ToastProvider />
+        <App />
       </NetworkRequestsProvider>
     </CssVarsProvider>
   </React.StrictMode>

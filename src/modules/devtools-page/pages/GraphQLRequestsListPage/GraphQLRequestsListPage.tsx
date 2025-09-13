@@ -3,7 +3,7 @@ import { FC, useState } from "react";
 import { Box } from "@mui/joy";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
-import { useGraphQLRequests } from "../../providers/GraphQLRequestsProvider";
+import { useGraphQLRequests } from "../../hooks/useGraphQLRequests";
 
 import { GraphQLRequestPanel } from "./GraphQLRequestPanel";
 import { GraphQLRequestsListPanel } from "./GraphQLRequestsListPanel";

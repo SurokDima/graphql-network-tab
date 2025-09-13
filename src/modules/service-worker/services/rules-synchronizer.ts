@@ -18,7 +18,6 @@ export const initializeGraphQLRulesSynchronizer = async (): Promise<void> => {
     );
 
     const tabs = await chrome.tabs.query({});
-
     const websiteConfigs = (await storage.getItem<WebsiteConfig[]>("requestRules")) ?? [];
 
     console.info(
