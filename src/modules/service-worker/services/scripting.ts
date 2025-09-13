@@ -15,19 +15,19 @@ export type ScriptObject = {
   loadTime?: "afterPageLoad" | "beforePageLoad";
 };
 
-export const injectJSAtRequestSource = (
-  code: string,
-  requestDetails: chrome.webRequest.WebRequestDetails
-) => {
-  injectScript(
-    {
-      codeType: ScriptCodeType.JS,
-      type: ScriptType.CODE,
-      value: code,
-    },
-    { tabId: requestDetails.tabId, frameIds: [requestDetails.frameId] }
-  );
-};
+// export const injectJSAtRequestSource = (
+//   code: string,
+//   requestDetails: chrome.webRequest.WebRequestDetails
+// ) => {
+//   injectScript(
+//     {
+//       codeType: ScriptCodeType.JS,
+//       type: ScriptType.CODE,
+//       value: code,
+//     },
+//     { tabId: requestDetails.tabId, frameIds: [requestDetails.frameId] }
+//   );
+// };
 
 export const injectScript = (
   script: ScriptObject,

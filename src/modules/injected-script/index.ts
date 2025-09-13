@@ -52,7 +52,7 @@ const customFetch = async function (
 
   if (!matchedScenario) {
     console.info(
-      "[GraphQL Network Tab][Network Mocking Script]: No matched request rule for the operation name. Returning original fetch."
+      "[GraphQL Network Tab][Network Mocking Script]: No matched scenario for the request. Returning original fetch."
     );
 
     return originalFetch(input, init);

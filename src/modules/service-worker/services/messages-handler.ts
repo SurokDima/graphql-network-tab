@@ -29,8 +29,23 @@ export const initializeMessagesHandler = () => {
     const domain = domainResult.value;
 
     if (message.action === "INJECT_MOCKING_SCRIPT") {
+      // Inject the mocking script, which mocks nothing at first
+      // We need to enable mocking by calling attachFetch() function
+      chrome.scripting.executeScript({
+        target: {
+          tabId: sender.tab.id,
+          frameIds: [sender.frameId],
+        },
+        files: ["injected-script/injected-script.iife.js"],
+        world: "MAIN",
+        injectImmediately: true,
+      });
+
       const websiteConfigs = (await storage.getItem<WebsiteConfig[]>("requestRules")) ?? [];
-      console.info("[GraphQL Network Tab][Service Worker]: Retrieved website configs from storage");
+      console.info(
+        "[GraphQL Network Tab][Service Worker]: Retrieved website configs from storage",
+        websiteConfigs
+      );
       const websiteConfig = websiteConfigs.find((config) => config.domain === domain);
 
       if (!websiteConfig) {
@@ -41,16 +56,6 @@ export const initializeMessagesHandler = () => {
 
         return;
       }
-
-      chrome.scripting.executeScript({
-        target: {
-          tabId: sender.tab.id,
-          frameIds: [sender.frameId],
-        },
-        files: ["injected-script/injected-script.iife.js"],
-        world: "MAIN",
-        injectImmediately: true,
-      });
 
       if (!websiteConfig.enabled) {
         console.info(
