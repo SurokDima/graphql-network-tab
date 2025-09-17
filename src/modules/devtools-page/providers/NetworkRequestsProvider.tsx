@@ -105,6 +105,7 @@ const mapRequestToNetworkRequest = async (
       statusCode: request.response.status,
       body: responseBody,
     },
+    startDate: new Date(request.startedDateTime),
   };
 };
 

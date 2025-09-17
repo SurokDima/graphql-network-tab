@@ -1,4 +1,6 @@
-import { GraphQLRequestRule } from "../common/types/graphQL-request-rule";
+import { AppliedRule, Rule } from "../common/types/graphQL-request-rule";
+
+import { sendMessageToContentScript } from "./services";
 
 console.info("[GraphQL Network Tab][Network Mocking Script]: Injected into the page.");
 
@@ -14,7 +16,7 @@ const customFetch = async function (
 
   const requestRules =
     // @ts-expect-error - We know that the global variable exists
-    (window.GRAPHQL_NETWORK_TAB?.requestRules as GraphQLRequestRule[]) ?? [];
+    (window.GRAPHQL_NETWORK_TAB?.requestRules as Rule[]) ?? [];
 
   console.info(
     "[GraphQL Network Tab][Network Mocking Script]: Got request rules from the global scope.",
@@ -22,6 +24,9 @@ const customFetch = async function (
   );
 
   const request = input instanceof Request ? input.clone() : new Request(input.toString(), init);
+
+  console.info("[GraphQL Network Tab][Network Mocking Script]: Cloned Request object", request);
+
   const originalBodyText = await request.text();
   const originalBody = originalBodyText ? JSON.parse(originalBodyText) : null;
   const operationName = originalBody?.operationName;
@@ -65,9 +70,10 @@ const customFetch = async function (
     matchedScenario
   );
 
+  const startDateTimestamp = Date.now();
   const originalResponse = await originalFetch(request, init);
 
-  return new Response(new Blob([matchedScenario.response.body]), {
+  const response = new Response(new Blob([matchedScenario.response.body]), {
     status: Number(matchedScenario.response.statusCode),
     statusText: "OK",
     headers: [
@@ -77,10 +83,32 @@ const customFetch = async function (
       ),
     ],
   });
+
+  const appliedRule = {
+    rule: matchedRequestRule,
+    requestDetails: {
+      url: request.url,
+      method: request.method,
+      startDateTimestamp,
+    },
+  } satisfies AppliedRule;
+
+  console.info(
+    "[GraphQL Network Tab][Network Mocking Script]: Creating an applied rule",
+    appliedRule
+  );
+
+  sendMessageToContentScript({
+    action: "ruleApplied",
+    appliedRule,
+  });
+
+  return response;
 };
 
 let originalFetch = window.fetch;
 
+// It must be called `attachFetch` since server worker will be injecting scripts that uses this global function
 const attachFetch = () => {
   if (window.fetch === customFetch) {
     console.info("[GraphQL Network Tab][Network Mocking Script]: Fetch is already attached.");
@@ -95,10 +123,9 @@ const attachFetch = () => {
 // @ts-expect-error - We know that the global variable exists
 window.attachFetch = attachFetch;
 
+// it must be called `restoreFetch` since server worker will be injecting scripts that uses this global function
 // @ts-expect-error - We know that the global variable exists
 window.restoreFetch = () => {
   console.info("[GraphQL Network Tab][Network Mocking Script]: Restoring original fetch.");
   window.fetch = originalFetch;
 };
-
-attachFetch();

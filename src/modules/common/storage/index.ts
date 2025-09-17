@@ -29,11 +29,25 @@ export const createStorage = (storageArea: chrome.storage.StorageArea) => {
     await setItem(key, record(currentValue));
   };
 
+  const listenToChanges = (
+    listener: (changes: Record<string, chrome.storage.StorageChange>) => void
+  ) => {
+    storageArea.onChanged.addListener(listener);
+  };
+
+  const stopListeningToChanges = (
+    listener: (changes: Record<string, chrome.storage.StorageChange>) => void
+  ) => {
+    storageArea.onChanged.removeListener(listener);
+  };
+
   return {
     getAllItems,
     getItem,
     setItem,
     removeItem,
     updateItem,
+    listenToChanges,
+    stopListeningToChanges,
   };
 };

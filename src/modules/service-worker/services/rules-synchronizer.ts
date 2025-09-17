@@ -11,7 +11,7 @@ export const initializeGraphQLRulesSynchronizer = async (): Promise<void> => {
     chrome
   );
 
-  chrome.storage.local.onChanged.addListener(async (changes) => {
+  storage.listenToChanges(async (changes) => {
     console.info(
       "[GraphQL Network Tab][Service Worker]: Registered local storage change event.",
       changes

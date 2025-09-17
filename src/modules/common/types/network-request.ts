@@ -9,8 +9,9 @@ export type NetworkRequest = {
   response: {
     headers: Headers;
     statusCode: number;
-    body: string;
+    body: string | null;
   };
+  startDate: Date;
 };
 
 export type Headers = Record<string, string>;

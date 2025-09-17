@@ -2,12 +2,12 @@ import { FC } from "react";
 
 import { Alert, Skeleton, Stack, Table, Typography, styled } from "@mui/joy";
 
-import { GraphQLRequestRule } from "../../../common/types/graphQL-request-rule";
+import { Rule } from "../../../common/types/graphQL-request-rule";
 import { GraphQLRequestRuleIcon } from "../../components/GraphQLRequestRuleIcon";
 import { InlineAlert } from "../../ui/InlineAlert";
 
 type GraphQLRequestRulesListProps = {
-  rules: GraphQLRequestRule[];
+  rules: Rule[];
   selectedRuleId: string | null;
   loading: boolean;
   error: Error | null;

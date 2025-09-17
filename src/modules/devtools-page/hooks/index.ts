@@ -1,5 +1,5 @@
 export * from "./useCopy";
-export * from "./useDelay";
+export * from "./useMinimumLoadingTime";
 export * from "./useGraphQLRequestRules";
 export * from "./useGraphQLRequests";
 export * from "./usePrettier";

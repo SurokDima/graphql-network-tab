@@ -1,16 +1,13 @@
 import { FC, useState } from "react";
 
 import { Add } from "@mui/icons-material";
-import { Box, Button, Input, Skeleton, Stack, Switch, Typography } from "@mui/joy";
+import { Box, Button, Input, Stack, Switch, Typography } from "@mui/joy";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
-import { WebsiteConfig } from "../../../common/types/website-config";
-import { getDomain } from "../../../common/utils/string.utils";
 import { GraphQLRequestRuleCreationModal } from "../../features/GraphQLRequestRuleCreationModal/GraphQLRequestRuleCreationModal";
 import { useGraphQLRules } from "../../hooks/useGraphQLRequestRules";
-import { useStorageItem } from "../../hooks/useStorage";
+import { useWebsiteConfig } from "../../providers/WebsiteConfigProvider";
 import { setFeatureEnabled } from "../../services/graphQL-request-rules";
-import { getCurrentTab } from "../../services/tabs";
 import { ConfirmModal } from "../../ui/ConfirmModal";
 import { InlineAlert } from "../../ui/InlineAlert";
 import { ToolbarItem } from "../../ui/ToolbarItem";
@@ -20,31 +17,32 @@ import { GraphQLRequestRulesList } from "./GraphQLRequestRulesList";
 
 export const GraphQLRequestRulesListPage: FC = () => {
   const { graphQLRules, loading, error } = useGraphQLRules();
-  const [checked, setChecked] = useState(false);
+  // const [checked, setChecked] = useState(false);
+  const websiteConfig = useWebsiteConfig();
 
-  const { loading: rulesEnabledLoading } = useStorageItem<WebsiteConfig[] | null | undefined>(
-    "requestRules",
-    {
-      onComplete: async (storageWebsiteConfigs) => {
-        const websiteConfigs = storageWebsiteConfigs ?? [];
-        const currentTab = await getCurrentTab();
-        if (!currentTab.url) return;
-        const domainResult = getDomain(currentTab.url);
-        if (!domainResult.ok) return;
-        const domain = domainResult.value;
+  // const { loading: rulesEnabledLoading } = useStorageItem<WebsiteConfig[] | null | undefined>(
+  //   "requestRules",
+  //   {
+  //     onComplete: async (storageWebsiteConfigs) => {
+  //       const websiteConfigs = storageWebsiteConfigs ?? [];
+  //       const currentTab = await getCurrentTab();
+  //       if (!currentTab.url) return;
+  //       const domainResult = getDomain(currentTab.url);
+  //       if (!domainResult.ok) return;
+  //       const domain = domainResult.value;
 
-        const isEnabled = websiteConfigs.some(
-          (websiteConfig) => websiteConfig.domain === domain && websiteConfig.enabled
-        );
+  //       const isEnabled = websiteConfigs.some(
+  //         (websiteConfig) => websiteConfig.domain === domain && websiteConfig.enabled
+  //       );
 
-        if (isEnabled) {
-          setHasUserBeenWarned(true);
-        }
+  //       if (isEnabled) {
+  //         setHasUserBeenWarned(true);
+  //       }
 
-        setChecked(isEnabled);
-      },
-    }
-  );
+  //       setChecked(isEnabled);
+  //     },
+  //   }
+  // );
 
   const [hasUserBeenWarned, setHasUserBeenWarned] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -56,14 +54,11 @@ export const GraphQLRequestRulesListPage: FC = () => {
   const [startsWith, setStartsWith] = useState("");
 
   const setGraphQLRulesEnabled = async (checked: boolean) => {
-    setChecked(checked);
-    const currentTab = await getCurrentTab();
-    if (!currentTab.url) return;
-    const domainResult = getDomain(currentTab.url);
-    if (!domainResult.ok) return;
-    const domain = domainResult.value;
-    setFeatureEnabled(domain, checked);
+    // TODO maybe reuse it from provider
+    setFeatureEnabled(checked);
   };
+
+  const rulesEnabled = websiteConfig.enabled;
 
   return (
     <>
@@ -91,45 +86,29 @@ export const GraphQLRequestRulesListPage: FC = () => {
         }}
       />
       <ToolbarItem>
-        {rulesEnabledLoading ? (
-          <Stack direction="row" gap={1} alignItems="center">
-            <Skeleton
-              variant="rectangular"
-              loading={true}
-              sx={{
-                height: "20px",
-                minWidth: "32px",
-                borderRadius: "16px",
-              }}
-            />
-            <Skeleton variant="text" level="body-md" sx={{ minWidth: "28px" }} />
-          </Stack>
-        ) : (
-          <Switch
-            disabled={rulesEnabledLoading}
-            checked={checked}
-            onChange={async (event: React.ChangeEvent<HTMLInputElement>) => {
-              const checked = event.target.checked;
+        <Switch
+          checked={websiteConfig.enabled}
+          onChange={async (event: React.ChangeEvent<HTMLInputElement>) => {
+            const checked = event.target.checked;
 
-              if (!hasUserBeenWarned && checked) {
-                setIsConfirmModalOpen(true);
-                return;
-              }
+            if (!hasUserBeenWarned && checked) {
+              setIsConfirmModalOpen(true);
+              return;
+            }
 
-              setGraphQLRulesEnabled(checked);
-            }}
-            color={checked ? "success" : "neutral"}
-            variant={checked ? "solid" : "outlined"}
-            endDecorator={checked ? "On" : "Off"}
-            slotProps={{
-              endDecorator: {
-                sx: {
-                  minWidth: 24,
-                },
+            setGraphQLRulesEnabled(checked);
+          }}
+          color={rulesEnabled ? "success" : "neutral"}
+          variant={rulesEnabled ? "solid" : "outlined"}
+          endDecorator={rulesEnabled ? "On" : "Off"}
+          slotProps={{
+            endDecorator: {
+              sx: {
+                minWidth: 24,
               },
-            }}
-          />
-        )}
+            },
+          }}
+        />
       </ToolbarItem>
       <Stack direction="column" sx={{ position: "relative", height: "100%" }}>
         <PanelGroup direction="horizontal">
@@ -153,7 +132,7 @@ export const GraphQLRequestRulesListPage: FC = () => {
                 >
                   <Input
                     value={startsWith}
-                    disabled={!checked}
+                    disabled={!rulesEnabled}
                     onChange={(e) => {
                       setStartsWith(e.target.value);
                     }}
@@ -166,7 +145,7 @@ export const GraphQLRequestRulesListPage: FC = () => {
                   rules={graphQLRules}
                   error={error}
                   loading={loading}
-                  disabled={!checked}
+                  disabled={!rulesEnabled}
                   selectedRuleId={selectedRuleId}
                   onSelectRule={setSelectedRuleId}
                 />
@@ -179,7 +158,7 @@ export const GraphQLRequestRulesListPage: FC = () => {
               >
                 <Button
                   startDecorator={<Add />}
-                  disabled={!checked}
+                  disabled={!rulesEnabled}
                   onClick={() => setIsModalOpen(true)}
                 >
                   Create new rule
@@ -189,10 +168,10 @@ export const GraphQLRequestRulesListPage: FC = () => {
           </Panel>
           {selectedRule && (
             <>
-              <PanelResizeHandle disabled={!checked} />
+              <PanelResizeHandle disabled={!rulesEnabled} />
               <Panel>
                 <GraphQLRequestRulePanel
-                  disabled={!checked}
+                  disabled={!rulesEnabled}
                   graphQlRequestRule={selectedRule}
                   onClose={() => setSelectedRuleId(null)}
                 />

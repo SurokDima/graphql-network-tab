@@ -32,5 +32,16 @@ export const useStorageItem = <TData>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
+  useEffect(() => {
+    const listener = (changes: Record<string, chrome.storage.StorageChange>) => {
+      if (changes[key]) {
+        setData(changes[key].newValue as TData);
+      }
+    };
+
+    storage.listenToChanges(listener);
+    return () => storage.stopListeningToChanges(listener);
+  }, [key]);
+
   return { data, loading, error };
 };

@@ -3,11 +3,20 @@ export type GraphQLRequestTarget = {
   endpoint: string;
 };
 
-export type GraphQLRequestRule = {
+export type Rule = {
   id: string;
   scenarios: Scenario[];
   activeScenarioId: string;
 } & GraphQLRequestTarget;
+
+export type AppliedRule = {
+  rule: Rule;
+  requestDetails: {
+    url: string;
+    method: string;
+    startDateTimestamp: number;
+  };
+};
 
 export type Scenario = {
   id: string;

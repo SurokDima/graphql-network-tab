@@ -1,8 +1,18 @@
+import { AppliedRule } from "../../common/types/graphQL-request-rule";
 import { WebsiteConfig } from "../../common/types/website-config";
 import { getDomain } from "../../common/utils/string.utils";
 import { storage } from "../storage";
 
 import { ScriptCodeType, ScriptType, injectScript } from "./scripting";
+
+export type MessageFromContentScript =
+  | {
+      action: "ruleApplied";
+      appliedRule: AppliedRule;
+    }
+  | {
+      action: "injectMockingScript";
+    };
 
 export const initializeMessagesHandler = () => {
   console.info("[GraphQL Network Tab][Service Worker]: Initializing messages handler.");
@@ -28,7 +38,7 @@ export const initializeMessagesHandler = () => {
 
     const domain = domainResult.value;
 
-    if (message.action === "INJECT_MOCKING_SCRIPT") {
+    if (message.action === "injectMockingScript") {
       // Inject the mocking script, which mocks nothing at first
       // We need to enable mocking by calling attachFetch() function
       chrome.scripting.executeScript({
@@ -75,6 +85,16 @@ export const initializeMessagesHandler = () => {
       };`,
         },
         { tabId: sender.tab.id }
+      );
+    }
+
+    if (message.action === "ruleApplied") {
+      storage.updateItem<AppliedRule[] | null | undefined, AppliedRule[]>(
+        "appliedRules",
+        (prevAppliedRules) => {
+          const newAppliedRules = [...(prevAppliedRules ?? []), message.appliedRule];
+          return newAppliedRules;
+        }
       );
     }
   });
