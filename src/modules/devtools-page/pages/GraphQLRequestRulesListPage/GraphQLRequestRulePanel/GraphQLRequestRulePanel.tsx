@@ -20,7 +20,7 @@ import {
   Box,
 } from "@mui/joy";
 
-import { GraphQLRequestRule } from "../../../../common/types/graphQL-request-rule";
+import { Rule } from "../../../../common/types/graphQL-request-rule";
 import { GraphQLRequestRuleIcon } from "../../../components/GraphQLRequestRuleIcon";
 import { CopyButton } from "../../../ui/CopyButton";
 import { Description } from "../../../ui/Description";
@@ -28,7 +28,7 @@ import { Description } from "../../../ui/Description";
 import { GraphQLRequestRuleScenariosList } from "./GraphQLRequestRuleScenariosList";
 
 type GraphQLRequestRulePanelProps = {
-  graphQlRequestRule: GraphQLRequestRule;
+  graphQlRequestRule: Rule;
   disabled?: boolean;
   onClose?: () => void;
 };

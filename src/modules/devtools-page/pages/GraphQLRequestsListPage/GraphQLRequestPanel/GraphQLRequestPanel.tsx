@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 
-import { Close, Splitscreen } from "@mui/icons-material";
+import { Close, Splitscreen, Warning } from "@mui/icons-material";
 import {
   IconButton,
   Tab,
@@ -11,10 +11,14 @@ import {
   Box,
   Stack,
   Typography,
+  Alert,
+  Button,
 } from "@mui/joy";
 
 import { GraphQLRequest } from "../../../../common/types/graphQL-request";
+import { AppliedRule } from "../../../../common/types/graphQL-request-rule";
 import { GraphQLRequestIcon } from "../../../components/GraphQLRequestIcon";
+import { useAppliedRules } from "../../../providers/AppliedRulesProvider";
 import {
   CodeView,
   CodeViewContainer,
@@ -37,6 +41,8 @@ export type GraphQLRequestPanelProps = {
 
 export const GraphQLRequestPanel: FC<GraphQLRequestPanelProps> = ({ graphQLRequest, onClose }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const appliedRules = useAppliedRules();
+  const response = getResponse(graphQLRequest, appliedRules);
 
   return (
     <>
@@ -87,7 +93,23 @@ export const GraphQLRequestPanel: FC<GraphQLRequestPanelProps> = ({ graphQLReque
             <GraphQLRequestVariablesView request={graphQLRequest} />
           </TabPanel>
           <TabPanel value={3}>
-            <ResponseView response={graphQLRequest.networkRequest.response.body} />
+            {graphQLRequest.networkRequest.response.body === null && response && (
+              <Alert
+                startDecorator={<Warning />}
+                sx={{ borderRadius: 0 }}
+                color="warning"
+                size="md"
+                variant="soft"
+                endDecorator={
+                  <Button size="sm" sx={{ borderRadius: "6px" }} variant="solid" color="warning">
+                    See
+                  </Button>
+                }
+              >
+                The response body has been mocked by a rule.
+              </Alert>
+            )}
+            <ResponseView response={response ?? ""} />
           </TabPanel>
         </Tabs>
       </Stack>
@@ -114,7 +136,7 @@ export const GraphQLRequestPanel: FC<GraphQLRequestPanelProps> = ({ graphQLReque
                 </ToolbarItem>
               </ToolbarItemsGroup>
             </Toolbar>
-            <CodeView code={graphQLRequest.networkRequest.response.body} language="json" />
+            <CodeView code={response ?? ""} language="json" />
           </CodeViewContainer>
         </SplitScreen>
       </SplitScreenModal>
@@ -130,3 +152,29 @@ const TabPanel = styled(JoyTabPanel)`
   overflow: auto;
   background: ${({ theme }) => theme.palette.background.level1};
 `;
+
+const getResponse = (graphQLRequest: GraphQLRequest, appliedRules: AppliedRule[]) => {
+  const body = graphQLRequest.networkRequest.response.body;
+  // If there's a response body, return it
+  if (body) return body;
+  // If there's no response body, check if there's an applied rule
+  const filteredAppliedRules = appliedRules.filter(
+    (rule) =>
+      rule.requestDetails.url === graphQLRequest.networkRequest.request.url &&
+      rule.requestDetails.method === graphQLRequest.networkRequest.request.method
+  );
+
+  const closedAppliedRule = filteredAppliedRules.sort(
+    (a, b) => a.requestDetails.startDateTimestamp - b.requestDetails.startDateTimestamp
+  )[0];
+
+  if (!closedAppliedRule) return null;
+
+  const appliedScenario =
+    closedAppliedRule.rule.scenarios.find(
+      (scenario) => scenario.id === closedAppliedRule.rule.activeScenarioId
+    ) ?? null;
+
+  if (!appliedScenario) return null;
+  return appliedScenario.response.body;
+};

@@ -114,7 +114,6 @@ export const GraphQLRequestRuleCreationModal: FC<GraphQLRequestRuleCreationModal
     );
 
     await refreshGraphQLRules();
-
     setActiveStep(2);
   };
 

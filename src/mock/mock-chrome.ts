@@ -55,6 +55,20 @@ export const mockChrome = {
         });
         cb();
       },
+      onChanged: {
+        addListener: (cb: (changes: Record<string, chrome.storage.StorageChange>) => void) => {
+          window.addEventListener("storage", (e) => {
+            if (!e.key) return;
+            cb({
+              [e.key]: {
+                newValue: e.newValue,
+                oldValue: e.oldValue,
+              },
+            });
+          });
+        },
+        removeListener: noop,
+      },
     },
   },
   devtools: {

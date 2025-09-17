@@ -2,14 +2,14 @@ import { useCallback, useEffect } from "react";
 
 import { atom, useAtom } from "jotai";
 
-import { GraphQLRequestRule } from "../../common/types/graphQL-request-rule";
+import { Rule } from "../../common/types/graphQL-request-rule";
 import { WebsiteConfig } from "../../common/types/website-config";
 import { getDomain } from "../../common/utils/string.utils";
 import { getCurrentTab } from "../services/tabs";
 import { storage } from "../storage";
 
 const graphQLRulesStateAtom = atom<{
-  data: GraphQLRequestRule[] | null;
+  data: Rule[] | null;
   loading: boolean;
   error: Error | null;
 }>({
@@ -18,6 +18,7 @@ const graphQLRulesStateAtom = atom<{
   error: null,
 });
 
+// TODO: maybe replace it with useStorageItem
 export const useGraphQLRules = () => {
   const [{ data: graphQLRules, loading, error }, setGraphQLRulesState] =
     useAtom(graphQLRulesStateAtom);

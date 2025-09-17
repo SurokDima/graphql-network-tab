@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 
 import {
-  GraphQLRequestRule,
+  Rule,
   GraphQLRequestTarget,
   Scenario,
   areTargetsEqual,
@@ -9,6 +9,8 @@ import {
 import { WebsiteConfig } from "../../common/types/website-config";
 import { getDomain } from "../../common/utils/string.utils";
 import { storage } from "../storage";
+
+import { getCurrentTab } from "./tabs";
 
 // TODO refactor
 export const setActiveScenario = async (
@@ -55,6 +57,79 @@ export const setActiveScenario = async (
         if (config.id === updatedWebsiteConfig.id) return updatedWebsiteConfig;
         return config;
       });
+    }
+  );
+};
+
+// TODO maybe compute url in the function instead of passing it as an argument
+// TODO refactor errors handling
+export const getWebsiteConfig = async () => {
+  const currentTab = await getCurrentTab();
+
+  if (!currentTab.url) {
+    throw new Error("Could not get current tab's URL.");
+  }
+
+  const url = currentTab.url;
+
+  const domainResult = getDomain(url);
+
+  if (!domainResult.ok) {
+    throw new Error("Could not extract domain from the URL.");
+  }
+
+  const domain = domainResult.value;
+
+  const websiteConfigs = await storage.getItem<WebsiteConfig[]>("requestRules");
+  const existingWebsiteConfig = websiteConfigs?.find((config) => config.domain === domain) ?? null;
+
+  if (existingWebsiteConfig) {
+    return existingWebsiteConfig;
+  }
+
+  await initializeWebsiteConfig(url);
+  await storage.getItem<WebsiteConfig[]>("requestRules");
+  const websiteConfig = websiteConfigs?.find((config) => config.domain === domain);
+
+  if (!websiteConfig) {
+    throw new Error("Could not retrieve website config from storage after initialization");
+  }
+
+  return websiteConfig;
+};
+
+const initializeWebsiteConfig = async (url: string) => {
+  const domainResult = getDomain(url);
+
+  if (!domainResult.ok) {
+    console.error(
+      "[GraphQL Network Tab][Devtools Page]: Could not extract domain from the URL.",
+      url
+    );
+
+    return;
+  }
+
+  const domain = domainResult.value;
+
+  await storage.updateItem(
+    "requestRules",
+    (storageWebsiteConfigs: WebsiteConfig[] | null | undefined): WebsiteConfig[] => {
+      const websiteConfigs = storageWebsiteConfigs ?? [];
+      const existingWebsiteConfig = websiteConfigs.find((config) => config.domain === domain);
+
+      if (existingWebsiteConfig) {
+        return websiteConfigs;
+      }
+
+      const newWebsiteConfig: WebsiteConfig = {
+        id: nanoid(),
+        domain: domain,
+        enabled: false,
+        rules: [],
+      };
+
+      return [...websiteConfigs, newWebsiteConfig];
     }
   );
 };
@@ -169,14 +244,28 @@ export const saveScenario = async (
 };
 
 // TODO optimize
-export const setFeatureEnabled = async (domain: string, enabled: boolean) => {
+export const setFeatureEnabled = async (enabled: boolean) => {
+  const currentTab = await getCurrentTab();
+
+  if (!currentTab.url) {
+    throw new Error("Could not get current tab's URL.");
+  }
+
+  const domainResult = getDomain(currentTab.url);
+
+  if (!domainResult.ok) {
+    throw new Error("Could not extract domain from the URL.");
+  }
+
+  const domain = domainResult.value;
+
   await storage.updateItem(
     "requestRules",
     (storageWebsiteConfigs: WebsiteConfig[] | null | undefined): WebsiteConfig[] => {
       const websiteConfigs = storageWebsiteConfigs ?? [];
-      const websiteConfig = websiteConfigs.find((config) => config.domain === domain);
+      const existingWebsiteConfig = websiteConfigs.find((config) => config.domain === domain);
 
-      if (!websiteConfig) {
+      if (!existingWebsiteConfig) {
         const newWebsiteConfig: WebsiteConfig = {
           id: nanoid(),
           domain: domain,
@@ -188,7 +277,7 @@ export const setFeatureEnabled = async (domain: string, enabled: boolean) => {
       }
 
       const updatedWebsiteConfig: WebsiteConfig = {
-        ...websiteConfig,
+        ...existingWebsiteConfig,
         enabled,
       };
 
@@ -200,6 +289,6 @@ export const setFeatureEnabled = async (domain: string, enabled: boolean) => {
   );
 };
 
-export const getGraphQLRequestRules = async (): Promise<GraphQLRequestRule[]> => {
-  return (await storage.getItem<GraphQLRequestRule[]>("requestRules")) ?? [];
+export const getGraphQLRequestRules = async (): Promise<Rule[]> => {
+  return (await storage.getItem<Rule[]>("requestRules")) ?? [];
 };

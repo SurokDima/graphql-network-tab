@@ -1,5 +1,6 @@
 import { mockChrome } from "../../../mock/mock-chrome";
 
+/** A wrapper over global chrome object, used to provide mock chrome object for development */
 export const chromeProvider =
   typeof chrome === "undefined" || !chrome.storage || !chrome.devtools ? mockChrome : chrome;
 
