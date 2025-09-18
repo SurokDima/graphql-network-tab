@@ -1,1 +1,0 @@
-export { GraphQLRequestRulePanel } from "./GraphQLRequestRulePanel";
