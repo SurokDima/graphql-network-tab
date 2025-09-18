@@ -1,1 +1,0 @@
-export { GraphQLRequestRulesListPage } from "./GraphQLRequestRulesListPage";
