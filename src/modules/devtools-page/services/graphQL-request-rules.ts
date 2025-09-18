@@ -7,7 +7,8 @@ import {
   areTargetsEqual,
 } from "../../common/types/graphQL-request-rule";
 import { WebsiteConfig } from "../../common/types/website-config";
-import { getDomain } from "../../common/utils/string.utils";
+import { safeGetDomain } from "../../common/utils/string.utils";
+import { logger } from "../logger";
 import { storage } from "../storage";
 
 import { getCurrentTab } from "./tabs";
@@ -18,7 +19,7 @@ export const setActiveScenario = async (
   graphQLRequestTarget: GraphQLRequestTarget,
   url: string
 ) => {
-  const domainResult = getDomain(url);
+  const domainResult = safeGetDomain(url);
 
   if (!domainResult.ok) {
     console.error(
@@ -72,7 +73,7 @@ export const getWebsiteConfig = async () => {
 
   const url = currentTab.url;
 
-  const domainResult = getDomain(url);
+  const domainResult = safeGetDomain(url);
 
   if (!domainResult.ok) {
     throw new Error("Could not extract domain from the URL.");
@@ -99,7 +100,7 @@ export const getWebsiteConfig = async () => {
 };
 
 const initializeWebsiteConfig = async (url: string) => {
-  const domainResult = getDomain(url);
+  const domainResult = safeGetDomain(url);
 
   if (!domainResult.ok) {
     console.error(
@@ -139,25 +140,15 @@ export const saveScenario = async (
   graphQLRequestTarget: GraphQLRequestTarget,
   url: string
 ) => {
-  const domainResult = getDomain(url);
+  logger.info("Saving scenario", { scenario, graphQLRequestTarget, url });
+  const domainResult = safeGetDomain(url);
 
   if (!domainResult.ok) {
-    console.error(
-      "[GraphQL Network Tab][Devtools Page]: Could not extract domain from the URL.",
-      url
-    );
-
+    logger.error("Could not extract domain from the URL.", url);
     return;
   }
 
   const domain = domainResult.value;
-
-  console.info(
-    "[GraphQL Network Tab][Devtools Page]: Creating new GraphQL scenario.",
-    scenario,
-    graphQLRequestTarget,
-    domain
-  );
 
   // TODO refactor
   await storage.updateItem(
@@ -240,7 +231,7 @@ export const saveScenario = async (
     }
   );
 
-  console.info("[GraphQL Network Tab][Devtools Page]: New GraphQL request rule has been created.");
+  logger.info("Scenario has been saved");
 };
 
 // TODO optimize
@@ -251,7 +242,7 @@ export const setFeatureEnabled = async (enabled: boolean) => {
     throw new Error("Could not get current tab's URL.");
   }
 
-  const domainResult = getDomain(currentTab.url);
+  const domainResult = safeGetDomain(currentTab.url);
 
   if (!domainResult.ok) {
     throw new Error("Could not extract domain from the URL.");

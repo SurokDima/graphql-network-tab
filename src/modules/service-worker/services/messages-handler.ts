@@ -1,6 +1,7 @@
 import { AppliedRule } from "../../common/types/graphQL-request-rule";
 import { WebsiteConfig } from "../../common/types/website-config";
-import { getDomain } from "../../common/utils/string.utils";
+import { safeGetDomain } from "../../common/utils/string.utils";
+import { logger } from "../logger";
 import { storage } from "../storage";
 
 import { ScriptCodeType, ScriptType, injectScript } from "./scripting";
@@ -15,23 +16,16 @@ export type MessageFromContentScript =
     };
 
 export const initializeMessagesHandler = () => {
-  console.info("[GraphQL Network Tab][Service Worker]: Initializing messages handler.");
+  logger.info("Initializing messages handler.");
 
   chrome.runtime.onMessage.addListener(async (message, sender) => {
-    console.info(
-      "[GraphQL Network Tab][Service Worker]: Received message from content script.",
-      message,
-      sender
-    );
+    logger.info("Received message from content script.", { message, sender });
 
     if (sender.tab?.id === undefined || sender.frameId === undefined || !sender.tab.url) return;
-    const domainResult = getDomain(sender.tab.url);
+    const domainResult = safeGetDomain(sender.tab.url);
 
     if (!domainResult.ok) {
-      console.error(
-        "[GraphQL Network Tab][Service Worker]: Could not extract domain from the URL.",
-        sender.tab.url
-      );
+      logger.error("Could not extract domain from the URL.", sender.tab.url);
 
       return;
     }
@@ -39,6 +33,7 @@ export const initializeMessagesHandler = () => {
     const domain = domainResult.value;
 
     if (message.action === "injectMockingScript") {
+      logger.info("Injecting mocking script.");
       // Inject the mocking script, which mocks nothing at first
       // We need to enable mocking by calling attachFetch() function
       chrome.scripting.executeScript({
@@ -52,30 +47,24 @@ export const initializeMessagesHandler = () => {
       });
 
       const websiteConfigs = (await storage.getItem<WebsiteConfig[]>("requestRules")) ?? [];
-      console.info(
-        "[GraphQL Network Tab][Service Worker]: Retrieved website configs from storage",
-        websiteConfigs
-      );
+
+      logger.info("Retrieved website configs from storage", websiteConfigs);
+
       const websiteConfig = websiteConfigs.find((config) => config.domain === domain);
 
       if (!websiteConfig) {
-        console.error(
-          "[GraphQL Network Tab][Service Worker]: Could not find website config for the domain.",
-          domain
-        );
+        logger.error("Could not find website config for the domain.", domain);
 
         return;
       }
 
       if (!websiteConfig.enabled) {
-        console.info(
-          "[GraphQL Network Tab][Service Worker]: Feature is disabled for the domain",
-          sender.tab
-        );
+        logger.info("Feature is disabled for the domain", sender.tab);
 
         return;
       }
 
+      logger.info("Injecting a script to attach fetch");
       injectScript(
         {
           codeType: ScriptCodeType.JS,

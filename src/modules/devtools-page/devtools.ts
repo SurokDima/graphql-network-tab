@@ -1,5 +1,7 @@
-console.info("[GraphQL Network Tab][Devtools Script]: Creating devtools panel.");
+import { logger } from "./logger";
 
-chrome.devtools.panels.create("GraphQL Network", "", "/index.html", () => {
-  console.info("[GraphQL Network Tab][Devtools Script]: Devtools panel has been created!");
+logger.info("Creating devtools panel.");
+
+chrome.devtools.panels.create("GraphQL Network Tab", "./assets/logo.svg", "/index.html", () => {
+  logger.info("Devtools panel has been created!");
 });

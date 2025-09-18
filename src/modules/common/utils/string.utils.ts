@@ -5,8 +5,12 @@ import { Result, wrap } from "../types/result";
  *
  * @example getDomain('https://example.com/path/to/page') // 'example.com'
  */
-export const getDomain = (url: string): Result<string> => {
+export const safeGetDomain = (url: string): Result<string> => {
   return wrap(() => new URL(url).hostname)();
+};
+
+export const safeParseJSON = <T>(str: string): Result<T> => {
+  return wrap(() => JSON.parse(str))();
 };
 
 export const isJSON = (str: string): boolean => {

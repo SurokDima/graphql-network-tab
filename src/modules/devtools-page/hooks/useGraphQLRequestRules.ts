@@ -4,7 +4,7 @@ import { atom, useAtom } from "jotai";
 
 import { Rule } from "../../common/types/graphQL-request-rule";
 import { WebsiteConfig } from "../../common/types/website-config";
-import { getDomain } from "../../common/utils/string.utils";
+import { safeGetDomain } from "../../common/utils/string.utils";
 import { getCurrentTab } from "../services/tabs";
 import { storage } from "../storage";
 
@@ -34,7 +34,7 @@ export const useGraphQLRules = () => {
       const currentTab = await getCurrentTab();
       if (!currentTab?.url) return;
 
-      const domainResult = getDomain(currentTab.url);
+      const domainResult = safeGetDomain(currentTab.url);
       if (!domainResult.ok) return;
       const domain = domainResult.value;
 

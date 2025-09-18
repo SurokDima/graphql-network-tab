@@ -1,9 +1,8 @@
+import { logger } from "./logger";
 import { initMessageHandler } from "./services/messageHandler";
 import { sendMessageToServiceWorker } from "./services/sendMessage";
 
-console.info(
-  "[GraphQL Network Tab][Content Script]: Sending message to service worker to inject mocking script."
-);
+logger.info("Content Script is running.");
 
 sendMessageToServiceWorker({ action: "injectMockingScript" });
 initMessageHandler();

@@ -39,4 +39,4 @@ jobs:
       - name: Test build
         uses: borales/actions-yarn@v4
         with:
-          cmd: run build
+          cmd: run build:prod

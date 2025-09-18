@@ -1,4 +1,5 @@
 import { AppliedRule } from "../../common/types/graphQL-request-rule";
+import { logger } from "../logger";
 
 export type ServiceWorkerMessage =
   | {
@@ -10,5 +11,6 @@ export type ServiceWorkerMessage =
     };
 
 export const sendMessageToServiceWorker = (message: ServiceWorkerMessage) => {
+  logger.info("Sending message to service worker", message);
   chrome.runtime.sendMessage(message);
 };

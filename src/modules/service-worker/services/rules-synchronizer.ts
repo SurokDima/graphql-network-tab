@@ -1,34 +1,26 @@
 import { WebsiteConfig } from "../../common/types/website-config";
-import { getDomain } from "../../common/utils/string.utils";
+import { safeGetDomain } from "../../common/utils/string.utils";
+import { logger } from "../logger";
 import { storage } from "../storage";
 
 import { ScriptCodeType, ScriptType, injectScript } from "./scripting";
 
 // TODO optimize
 export const initializeGraphQLRulesSynchronizer = async (): Promise<void> => {
-  console.info(
-    "[GraphQL Network Tab][Service Worker]: Initializing graphQL rules synchronizer.",
-    chrome
-  );
+  logger.info("Initializing graphQL rules synchronizer.", chrome);
 
   storage.listenToChanges(async (changes) => {
-    console.info(
-      "[GraphQL Network Tab][Service Worker]: Registered local storage change event.",
-      changes
-    );
+    logger.info("Registered local storage change event.", changes);
 
     const tabs = await chrome.tabs.query({});
     const websiteConfigs = (await storage.getItem<WebsiteConfig[]>("requestRules")) ?? [];
 
-    console.info(
-      "[GraphQL Network Tab][Service Worker]: Retrieved website configs from storage",
-      websiteConfigs
-    );
+    logger.info("Retrieved website configs from storage", websiteConfigs);
 
     tabs.forEach((tab) => {
       if (!tab.id || !tab.url) return;
 
-      const domainResult = getDomain(tab.url);
+      const domainResult = safeGetDomain(tab.url);
       if (!domainResult.ok) return;
       const domain = domainResult.value;
 
@@ -36,7 +28,7 @@ export const initializeGraphQLRulesSynchronizer = async (): Promise<void> => {
       if (!websiteConfig) return;
 
       if (!websiteConfig.enabled) {
-        console.info(`[GraphQL Network Tab][Service Worker]: Disabling feature for the tab`, tab);
+        logger.info("Restoring original fetch for the tab", tab);
 
         injectScript(
           {
@@ -51,6 +43,8 @@ export const initializeGraphQLRulesSynchronizer = async (): Promise<void> => {
       }
 
       if (websiteConfig.rules.length === 0) return;
+
+      logger.info("Attaching fetch to the tab", tab);
 
       injectScript(
         {
