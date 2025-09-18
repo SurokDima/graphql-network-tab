@@ -1,37 +1,50 @@
 import { AppliedRule, Rule } from "../common/types/graphQL-request-rule";
+import { safeParseJSON } from "../common/utils/string.utils";
 
+import { logger } from "./logger";
 import { sendMessageToContentScript } from "./services";
 
-console.info("[GraphQL Network Tab][Network Mocking Script]: Injected into the page.");
+logger.info("Injected script is running.");
 
 const customFetch = async function (
   input: RequestInfo | URL,
   init?: RequestInit
 ): Promise<Response> {
-  console.info(
-    "[GraphQL Network Tab][Network Mocking Script]: Intercepted fetch request",
-    input,
-    init
-  );
+  logger.info("Intercepted fetch request", input, init);
 
-  const requestRules =
+  const rules =
     // @ts-expect-error - We know that the global variable exists
     (window.GRAPHQL_NETWORK_TAB?.requestRules as Rule[]) ?? [];
 
-  console.info(
-    "[GraphQL Network Tab][Network Mocking Script]: Got request rules from the global scope.",
-    requestRules
-  );
+  logger.info("Retrieved the following rules", rules);
 
   const request = input instanceof Request ? input.clone() : new Request(input.toString(), init);
 
-  console.info("[GraphQL Network Tab][Network Mocking Script]: Cloned Request object", request);
+  logger.info("Cloned Request object", request);
 
   const originalBodyText = await request.text();
-  const originalBody = originalBodyText ? JSON.parse(originalBodyText) : null;
-  const operationName = originalBody?.operationName;
+  const originalBodyResult = safeParseJSON(originalBodyText);
 
-  const matchedRequestRule = requestRules.find(
+  if (!originalBodyResult.ok) {
+    logger.warn("Failed to parse original body", originalBodyResult.error);
+    return originalFetch(input, init);
+  }
+
+  if (!originalBodyResult.value) {
+    logger.info("Original body is empty", originalBodyResult.value);
+    return originalFetch(input, init);
+  }
+
+  const operationName = (originalBodyResult.value as { operationName?: string }).operationName;
+
+  if (!operationName) {
+    logger.info("Original body does not contain operation name", originalBodyResult.value);
+    return originalFetch(input, init);
+  }
+
+  logger.info("Operation name", operationName);
+
+  const matchedRequestRule = rules.find(
     (rule) =>
       rule.endpoint === request.url &&
       rule.operationName === operationName &&
@@ -39,39 +52,30 @@ const customFetch = async function (
   );
 
   if (!matchedRequestRule) {
-    console.info(
-      "[GraphQL Network Tab][Network Mocking Script]: No matched request rules for the request. Returning original fetch."
+    logger.info(
+      `No matched request rules for endpoint ${request.url} and operation name ${operationName}`
     );
 
     return originalFetch(input, init);
   }
 
-  console.info("request", request);
-
-  // Request body can be sent only for request methods other than GET and HEAD.
-  const canRequestBodyBeSent = !["GET", "HEAD"].includes(request.method);
+  logger.info("Matched request rule", matchedRequestRule);
 
   const matchedScenario = matchedRequestRule.scenarios.find(
     (scenario) => scenario.id === matchedRequestRule.activeScenarioId
   );
 
   if (!matchedScenario) {
-    console.info(
-      "[GraphQL Network Tab][Network Mocking Script]: No matched scenario for the request. Returning original fetch."
-    );
+    logger.info("No matched scenario for the request in the matched rule");
 
     return originalFetch(input, init);
   }
 
-  console.info(
-    "[GraphQL Network Tab][Network Mocking Script]: Original request body",
-    originalBody,
-    canRequestBodyBeSent,
-    matchedScenario
-  );
-
   const startDateTimestamp = Date.now();
+
+  logger.info("Starting original fetch", request, init);
   const originalResponse = await originalFetch(request, init);
+  logger.info("Received original response", originalResponse);
 
   const response = new Response(new Blob([matchedScenario.response.body]), {
     status: Number(matchedScenario.response.statusCode),
@@ -93,10 +97,7 @@ const customFetch = async function (
     },
   } satisfies AppliedRule;
 
-  console.info(
-    "[GraphQL Network Tab][Network Mocking Script]: Creating an applied rule",
-    appliedRule
-  );
+  logger.info("Creating an applied rule", appliedRule);
 
   sendMessageToContentScript({
     action: "ruleApplied",
@@ -111,11 +112,11 @@ let originalFetch = window.fetch;
 // It must be called `attachFetch` since server worker will be injecting scripts that uses this global function
 const attachFetch = () => {
   if (window.fetch === customFetch) {
-    console.info("[GraphQL Network Tab][Network Mocking Script]: Fetch is already attached.");
+    logger.warn("Fetch is already attached.");
     return;
   }
 
-  console.info("[GraphQL Network Tab][Network Mocking Script]: Attaching fetch.");
+  logger.info("Attaching fetch.");
   originalFetch = window.fetch;
   window.fetch = customFetch;
 };
@@ -126,6 +127,6 @@ window.attachFetch = attachFetch;
 // it must be called `restoreFetch` since server worker will be injecting scripts that uses this global function
 // @ts-expect-error - We know that the global variable exists
 window.restoreFetch = () => {
-  console.info("[GraphQL Network Tab][Network Mocking Script]: Restoring original fetch.");
+  logger.info("Restoring original fetch.");
   window.fetch = originalFetch;
 };

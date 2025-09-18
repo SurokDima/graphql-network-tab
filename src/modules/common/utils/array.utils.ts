@@ -29,3 +29,7 @@ export function toggleItem<TItem>(
  */
 export const interleave = <TItem>(arr: TItem[], x: TItem): TItem[] =>
   arr.flatMap((e) => [e, x]).slice(0, -1);
+
+export const toArray = <TItem>(item: TItem | TItem[]): TItem[] => {
+  return Array.isArray(item) ? item : [item];
+};
